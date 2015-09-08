@@ -68,5 +68,11 @@ class binUtils {
       {
         return val>((1<<(bps-1))-1)?val-(1<<bps):val;
       }
+      static string U322Str(uint32_t val)
+      {
+        string s;
+        for (int i=0;i<4;i++) {s+=(char)(val & 0xff);val>>=8;};
+        return s;
+      }
 };
 #endif // UTILS_H

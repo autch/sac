@@ -1,6 +1,6 @@
 #include "wav.h"
 
-void Wav::AppendChunk(uint32_t chunkid,uint32_t chunksize,uint8_t *data,uint32_t len)
+void Chunks::append(uint32_t chunkid,uint32_t chunksize,uint8_t *data,uint32_t len)
 {
   tChunk chunk;
   chunk.id=chunkid;
@@ -10,6 +10,7 @@ void Wav::AppendChunk(uint32_t chunkid,uint32_t chunksize,uint8_t *data,uint32_t
     miscUtils::CpyVecCh(chunk.data,data,len);
   }
   WavChunks.push_back(chunk);
+  metadatasize+=(8+len);
 }
 
 void Wav::InitReader(int maxframesize)
@@ -40,7 +41,7 @@ int Wav::ReadSamples(vector <vector <int32_t>>&data,int samplestoread)
   return samplesread;
 }
 
-void Wav::ReadChunk(vector <uint8_t>data,size_t len)
+void Wav::readData(vector <uint8_t>&data,size_t len)
 {
   if (data.size()<len) data.resize(len);
   file.read((char*)(&data[0]),len);
@@ -49,6 +50,7 @@ void Wav::ReadChunk(vector <uint8_t>data,size_t len)
 int Wav::ReadHeader()
 {
   uint8_t buf[32];
+  vector <uint8_t> vbuf;
   uint32_t chunkid,chunksize;
 
   file.read((char*)buf,12); // read 'RIFF' chunk descriptor
@@ -58,7 +60,7 @@ int Wav::ReadHeader()
   // do we have a wave file?
   if (chunkid==0x46464952 && binUtils::get32LH(buf+8)==0x45564157) {
 
-    AppendChunk(chunkid,chunksize,buf+8,4);
+    myChunks.append(chunkid,chunksize,buf+8,4);
 
     while (1) {
       file.read((char*)buf,8);
@@ -66,13 +68,12 @@ int Wav::ReadHeader()
 
       chunkid   = binUtils::get32LH(buf);
       chunksize = binUtils::get32LH(buf+4);
-      cout << "reading chunk: '" << buf[0] << buf[1] << buf[2] << buf[3] << "' (" << chunksize << "): ";
-      if (chunkid==0x020746d66) {
+      if (chunkid==0x020746d66) { // read 'fmt ' chunk
         if (chunksize!=16) {cout << "warning: invalid fmt-chunk size\n";return 1;}
         else {
-            cout << "ok" << endl;
             file.read((char*)buf,16);
-            AppendChunk(chunkid,chunksize,buf,16);
+            myChunks.append(chunkid,chunksize,buf,16);
+
             int audioformat=binUtils::get16LH(buf);
             if (audioformat!=1) {cout << "warning: only PCM Format supported\n";return 1;};
             numchannels=binUtils::get16LH(buf+2);
@@ -81,37 +82,32 @@ int Wav::ReadHeader()
             blockalign=binUtils::get16LH(buf+12);
             bitspersample=binUtils::get16LH(buf+14);
             kbps=(samplerate*numchannels*bitspersample)/1000;
-            /*cout << numchannels << endl;
-            cout << samplerate << endl;
-            cout << kbps << endl;
-            cout << byterate << endl;
-            cout << blockalign << endl;
-            cout << bitspersample << endl;*/
         }
-      } else if (chunkid==0x61746164) {
-        cout << endl;
-        AppendChunk(chunkid,chunksize,buf,0);
+      } else if (chunkid==0x61746164) { // 'data' chunk
+        myChunks.append(chunkid,chunksize,buf,0);
         datapos=file.tellg();
         numsamples=chunksize/numchannels/(bitspersample/8);
         samplesleft=numsamples;
         endofdata=datapos+(streampos)chunksize;
-        if (endofdata==filesize) break;
+        if (endofdata==filesize) {seektodatapos=false;break;} // if data chunk is last chunk, break
         else {
-          cout << "skipping\n";
           int64_t pos=file.tellg();
           file.seekg(pos+chunksize);
         }
-      } else {
-        cout << "skipping\n";
-        int64_t pos=file.tellg();
-        file.seekg(pos+chunksize);
+      } else { // read remaining chunks
+        readData(vbuf,chunksize);
+        myChunks.append(chunkid,chunksize,&vbuf[0],chunksize);
       }
       if (file.tellg()==getFileSize()) break;
     }
   } else return 1;
-  cout << "number of chunks: " << WavChunks.size() << endl;
-  for (size_t i=0;i<WavChunks.size();i++) {
-    cout << " chunk: " << setw(2) << (i+1) << ": " << WavChunks[i].data.size() << endl;
+
+  if (verbose) {
+    cout << "Number of chunks: " << myChunks.getNumChunks() << endl;
+    for (size_t i=0;i<myChunks.getNumChunks();i++)
+      cout << " Chunk" << setw(2) << (i+1) << ": '" << binUtils::U322Str(myChunks.getChunkID(i)) << "' " << myChunks.getChunkDataSize(i) << " Bytes\n";
+    cout << "Metadatasize: " << myChunks.getMetaDataSize() << " Bytes\n";
   }
+  if (seektodatapos) {file.seekg(datapos);seektodatapos=false;};
   return 0;
 }

@@ -1,8 +1,8 @@
 #include "global.h"
-#include "wav.h"
-#include "sac.h"
 #include "coder.h"
 #include "utils.h"
+#include "file/wav.h"
+#include "file/sac.h"
 
 void PrintInfo(const Wav &myWav)
 {
@@ -50,7 +50,7 @@ int main(int argc,char *argv[])
     }
   }
   if (mode==0) {
-    Wav myWav;
+    Wav myWav(true);
     cout << "Open: '" << sinputfile << "': ";
     if (myWav.OpenRead(sinputfile)==0) {
       cout << "ok (" << myWav.getFileSize() << " Bytes)\n";

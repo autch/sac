@@ -2,18 +2,20 @@
 #define SAC_H
 
 #include "file.h"
-#include "utils.h"
+#include "wav.h"
+#include "../utils.h"
 
 class Sac : public AudioFile
 {
   public:
-    using AudioFile::AudioFile;
-    Sac(const AudioFile &file)
-    :AudioFile(file)
+    Sac(Wav &file)
+    :AudioFile(file),myChunks(file.getChunks())
     {
 
     }
     int WriteHeader();
+  private:
+    Chunks &myChunks;
 };
 
 

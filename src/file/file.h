@@ -1,7 +1,7 @@
 #ifndef FILE_H
 #define FILE_H
 
-#include "global.h"
+#include "../global.h"
 
 class AudioFile {
   public:

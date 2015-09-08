@@ -1,10 +1,10 @@
 # depslib dependency file v1.0
-1441656475 source:c:\code\projects\sac\src\main.cpp
+1441725696 source:c:\code\projects\sac\src\main.cpp
 	"global.h"
-	"wav.h"
-	"sac.h"
 	"coder.h"
 	"utils.h"
+	"file/wav.h"
+	"file/sac.h"
 
 1441632779 c:\code\projects\sac\src\global.h
 	<iostream>
@@ -13,13 +13,13 @@
 	<sstream>
 	<iomanip>
 
-1441655555 c:\code\projects\sac\src\utils.h
+1441725123 c:\code\projects\sac\src\utils.h
 	"global.h"
 
-1441660355 source:c:\code\projects\sac\src\wav.cpp
+1441725580 source:c:\code\projects\sac\src\wav.cpp
 	"wav.h"
 
-1441691925 c:\code\projects\sac\src\wav.h
+1441725494 c:\code\projects\sac\src\wav.h
 	"file.h"
 	"utils.h"
 
@@ -39,6 +39,27 @@
 1441650482 source:c:\code\projects\sac\src\coder.cpp
 	"coder.h"
 
-1441650438 c:\code\projects\sac\src\coder.h
+1441725673 c:\code\projects\sac\src\coder.h
+	"file/wav.h"
+
+1441726114 c:\code\projects\sac\src\file\wav.h
+	"file.h"
+	"../utils.h"
+
+1441725677 c:\code\projects\sac\src\file\file.h
+	"../global.h"
+
+1441650924 source:c:\code\projects\sac\src\file\file.cpp
+	"file.h"
+
+1441726064 source:c:\code\projects\sac\src\file\sac.cpp
+	"sac.h"
+
+1441726123 c:\code\projects\sac\src\file\sac.h
+	"file.h"
+	"wav.h"
+	"../utils.h"
+
+1441725580 source:c:\code\projects\sac\src\file\wav.cpp
 	"wav.h"
 

@@ -1,7 +1,7 @@
 #ifndef CODER_H
 #define CODER_H
 
-#include "wav.h"
+#include "file/wav.h"
 
 class Coder {
   public:
