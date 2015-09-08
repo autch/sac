@@ -1,0 +1,44 @@
+# depslib dependency file v1.0
+1441656475 source:c:\code\projects\sac\src\main.cpp
+	"global.h"
+	"wav.h"
+	"sac.h"
+	"coder.h"
+	"utils.h"
+
+1441632779 c:\code\projects\sac\src\global.h
+	<iostream>
+	<algorithm>
+	<fstream>
+	<sstream>
+	<iomanip>
+
+1441655555 c:\code\projects\sac\src\utils.h
+	"global.h"
+
+1441660355 source:c:\code\projects\sac\src\wav.cpp
+	"wav.h"
+
+1441691925 c:\code\projects\sac\src\wav.h
+	"file.h"
+	"utils.h"
+
+1441650924 source:c:\code\projects\sac\src\file.cpp
+	"file.h"
+
+1441653804 c:\code\projects\sac\src\file.h
+	"global.h"
+
+1441655709 c:\code\projects\sac\src\sac.h
+	"file.h"
+	"utils.h"
+
+1441655759 source:c:\code\projects\sac\src\sac.cpp
+	"sac.h"
+
+1441650482 source:c:\code\projects\sac\src\coder.cpp
+	"coder.h"
+
+1441650438 c:\code\projects\sac\src\coder.h
+	"wav.h"
+
