@@ -2,6 +2,7 @@
 
 int Sac::WriteHeader()
 {
+  const uint32_t metadatasize=myChunks.GetMetaDataSize();
   uint8_t buf[32];
   vector <uint8_t>metadata;
   buf[0]='S';
@@ -13,8 +14,9 @@ int Sac::WriteHeader()
   binUtils::put16LH(buf+10,bitspersample);
   binUtils::put32LH(buf+12,numsamples);
   binUtils::put32LH(buf+16,0);
-  binUtils::put32LH(buf+20,myChunks.getMetaDataSize());
+  binUtils::put32LH(buf+20,metadatasize);
   file.write((char*)buf,24);
-  if (file.gcount()==24) return 0;
-  else return 1;
+  if (myChunks.StoreMetaData(metadata)!=metadatasize) cerr << "  warning: metadatasize mismatch\n";
+  file.write((char*)(&metadata[0]),metadatasize);
+  return 0;
 }

@@ -1,5 +1,5 @@
 #include "global.h"
-#include "coder.h"
+#include "codec.h"
 #include "utils.h"
 #include "file/wav.h"
 #include "file/sac.h"
@@ -61,8 +61,8 @@ int main(int argc,char *argv[])
            cout << "ok\n";
            mySac.WriteHeader();
            PrintInfo(myWav);
-           Coder myCoder;
-           myCoder.EncodeFile(myWav);
+           Model myModel;
+           myModel.EncodeFile(myWav,mySac);
            cout << mySac.readFileSize() << " Bytes\n";
            mySac.Close();
          } else cout << "could not create\n";

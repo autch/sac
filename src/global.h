@@ -9,4 +9,6 @@
 
 using namespace std;
 
+#define DO(n) for (uint32_t _=0;_<n;_++)
+
 #endif // GLOBAL_H

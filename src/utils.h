@@ -13,10 +13,6 @@ class strUtils {
 
 class miscUtils {
   public:
-      static void CpyVecCh(vector <uint8_t> &dest,const uint8_t* src,int len)
-      {
-        for (int i=0;i<len;i++) dest[i]=src[i];
-      }
   // retrieve time string
   static string getTimeFromSamples(int numsamples,int samplerate)
   {

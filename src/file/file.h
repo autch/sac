@@ -20,6 +20,8 @@ class AudioFile {
     int getNumSamples()const {return numsamples;};
     streampos readFileSize();
     void Close() {if (file.is_open()) file.close();};
+    void ReadData(vector <uint8_t>&data,size_t len);
+    void WriteData(const vector <uint8_t>&data,size_t len);
   protected:
     fstream file;
     streampos filesize;

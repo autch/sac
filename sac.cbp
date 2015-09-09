@@ -36,17 +36,21 @@
 			<Add option="-Wall" />
 			<Add option="-fexceptions" />
 		</Compiler>
-		<Unit filename="src/coder.cpp" />
-		<Unit filename="src/coder.h" />
-		<Unit filename="src/file.cpp" />
-		<Unit filename="src/file.h" />
+		<Unit filename="src/coder/bit.cpp" />
+		<Unit filename="src/coder/bit.h" />
+		<Unit filename="src/file/file.cpp" />
+		<Unit filename="src/file/file.h" />
+		<Unit filename="src/file/sac.cpp" />
+		<Unit filename="src/file/sac.h" />
+		<Unit filename="src/file/wav.cpp" />
+		<Unit filename="src/file/wav.h" />
 		<Unit filename="src/global.h" />
 		<Unit filename="src/main.cpp" />
-		<Unit filename="src/sac.cpp" />
-		<Unit filename="src/sac.h" />
+		<Unit filename="src/model.cpp" />
+		<Unit filename="src/model.h" />
+		<Unit filename="src/pred/predictor.cpp" />
+		<Unit filename="src/pred/predictor.h" />
 		<Unit filename="src/utils.h" />
-		<Unit filename="src/wav.cpp" />
-		<Unit filename="src/wav.h" />
 		<Extensions>
 			<code_completion />
 			<envvars />

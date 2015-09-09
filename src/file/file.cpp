@@ -23,3 +23,13 @@ int AudioFile::OpenWrite(const string &fname)
   else return 1;
 }
 
+void AudioFile::ReadData(vector <uint8_t>&data,size_t len)
+{
+  if (data.size()<len) data.resize(len);
+  file.read(reinterpret_cast<char*>(&data[0]),len);
+}
+
+void AudioFile::WriteData(const vector <uint8_t>&data,size_t len)
+{
+  file.write(reinterpret_cast<const char*>(&data[0]),len);
+}

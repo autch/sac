@@ -1,19 +1,19 @@
 # depslib dependency file v1.0
-1441725696 source:c:\code\projects\sac\src\main.cpp
+1441815214 source:c:\code\projects\sac\src\main.cpp
 	"global.h"
-	"coder.h"
+	"codec.h"
 	"utils.h"
 	"file/wav.h"
 	"file/sac.h"
 
-1441632779 c:\code\projects\sac\src\global.h
+1441814918 c:\code\projects\sac\src\global.h
 	<iostream>
 	<algorithm>
 	<fstream>
 	<sstream>
 	<iomanip>
 
-1441725123 c:\code\projects\sac\src\utils.h
+1441727371 c:\code\projects\sac\src\utils.h
 	"global.h"
 
 1441725580 source:c:\code\projects\sac\src\wav.cpp
@@ -36,23 +36,25 @@
 1441655759 source:c:\code\projects\sac\src\sac.cpp
 	"sac.h"
 
-1441650482 source:c:\code\projects\sac\src\coder.cpp
+1441732425 source:c:\code\projects\sac\src\coder.cpp
 	"coder.h"
 
-1441725673 c:\code\projects\sac\src\coder.h
+1441732382 c:\code\projects\sac\src\coder.h
 	"file/wav.h"
+	"file/sac.h"
+	"pred/predictor.h"
 
-1441726114 c:\code\projects\sac\src\file\wav.h
+1441816462 c:\code\projects\sac\src\file\wav.h
 	"file.h"
 	"../utils.h"
 
-1441725677 c:\code\projects\sac\src\file\file.h
+1441816507 c:\code\projects\sac\src\file\file.h
 	"../global.h"
 
-1441650924 source:c:\code\projects\sac\src\file\file.cpp
+1441816582 source:c:\code\projects\sac\src\file\file.cpp
 	"file.h"
 
-1441726064 source:c:\code\projects\sac\src\file\sac.cpp
+1441814075 source:c:\code\projects\sac\src\file\sac.cpp
 	"sac.h"
 
 1441726123 c:\code\projects\sac\src\file\sac.h
@@ -60,6 +62,36 @@
 	"wav.h"
 	"../utils.h"
 
-1441725580 source:c:\code\projects\sac\src\file\wav.cpp
+1441816586 source:c:\code\projects\sac\src\file\wav.cpp
 	"wav.h"
+
+1441731697 c:\code\projects\sac\src\pred\predictor.h
+	"../global.h"
+
+1441731086 source:c:\code\projects\sac\src\pred\predictor.cpp
+	"predictor.h"
+
+1441736567 source:c:\code\projects\sac\src\model.cpp
+	"model.h"
+
+1441814237 c:\code\projects\sac\src\model.h
+	"file/wav.h"
+	"file/sac.h"
+	"pred/predictor.h"
+	"coder/bit.h"
+
+1441815066 source:c:\code\projects\sac\src\coder\bit.cpp
+	"bit.h"
+
+1441816559 c:\code\projects\sac\src\coder\bit.h
+	"../global.h"
+
+1441817192 source:c:\code\projects\sac\src\codec.cpp
+	"codec.h"
+
+1441816152 c:\code\projects\sac\src\codec.h
+	"file/wav.h"
+	"file/sac.h"
+	"pred/predictor.h"
+	"coder/bit.h"
 

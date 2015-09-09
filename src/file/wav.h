@@ -11,14 +11,15 @@ class Chunks {
   };
   public:
     Chunks():metadatasize(0){};
-    void append(uint32_t chunkid,uint32_t chunksize,uint8_t *data,uint32_t len);
-    size_t getNumChunks() const {return WavChunks.size();};
-    uint32_t getChunkID(int chunk) const {return WavChunks[chunk].id;};
-    uint32_t getChunkSize(int chunk) const {return WavChunks[chunk].csize;};
-    size_t getChunkDataSize(int chunk) const {return WavChunks[chunk].data.size();};
-    uint32_t getMetaDataSize() const {return metadatasize;};
+    void Append(uint32_t chunkid,uint32_t chunksize,uint8_t *data,uint32_t len);
+    size_t GetNumChunks() const {return wavchunks.size();};
+    uint32_t GetChunkID(int chunk) const {return wavchunks[chunk].id;};
+    uint32_t GetChunkSize(int chunk) const {return wavchunks[chunk].csize;};
+    size_t GetChunkDataSize(int chunk) const {return wavchunks[chunk].data.size();};
+    uint32_t GetMetaDataSize() const {return metadatasize;};
+    uint32_t StoreMetaData(vector <uint8_t>&data);
   private:
-    vector <tChunk> WavChunks;
+    vector <tChunk> wavchunks;
     uint32_t metadatasize;
 };
 
@@ -32,7 +33,6 @@ class Wav : public AudioFile {
     Chunks &getChunks(){return myChunks;};
   private:
     Chunks myChunks;
-    void readData(vector <uint8_t>&data,size_t len);
     vector <uint8_t>readbuf;
     streampos datapos,endofdata;
     int byterate,blockalign,samplesleft;
