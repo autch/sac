@@ -59,7 +59,6 @@ int main(int argc,char *argv[])
          cout << "Create: '" << soutputfile << "': ";
          if (mySac.OpenWrite(soutputfile)==0) {
            cout << "ok\n";
-           mySac.WriteHeader();
            PrintInfo(myWav);
            Model myModel;
            myModel.EncodeFile(myWav,mySac);

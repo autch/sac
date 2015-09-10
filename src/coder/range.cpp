@@ -1,4 +1,4 @@
-#include "bit.h"
+#include "range.h"
 
 // binary rangecoder
 void RangeCoderSH::Init()

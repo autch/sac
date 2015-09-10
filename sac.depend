@@ -1,12 +1,12 @@
 # depslib dependency file v1.0
-1441815214 source:c:\code\projects\sac\src\main.cpp
+1441888712 source:c:\code\projects\sac\src\main.cpp
 	"global.h"
 	"codec.h"
 	"utils.h"
 	"file/wav.h"
 	"file/sac.h"
 
-1441814918 c:\code\projects\sac\src\global.h
+1441889673 c:\code\projects\sac\src\global.h
 	<iostream>
 	<algorithm>
 	<fstream>
@@ -86,12 +86,28 @@
 1441816559 c:\code\projects\sac\src\coder\bit.h
 	"../global.h"
 
-1441817192 source:c:\code\projects\sac\src\codec.cpp
+1441889880 source:c:\code\projects\sac\src\codec.cpp
 	"codec.h"
 
-1441816152 c:\code\projects\sac\src\codec.h
+1441887752 c:\code\projects\sac\src\codec.h
 	"file/wav.h"
 	"file/sac.h"
 	"pred/predictor.h"
-	"coder/bit.h"
+	"coder/range.h"
+	"coder/rice.h"
+
+1441882066 c:\code\projects\sac\src\coder\range.h
+	"bufio.h"
+
+1441882052 c:\code\projects\sac\src\coder\bufio.h
+	"../global.h"
+
+1441881974 source:c:\code\projects\sac\src\coder\range.cpp
+	"range.h"
+
+1441898746 c:\code\projects\sac\src\coder\rice.h
+	"range.h"
+	"counter.h"
+
+1441889639 c:\code\projects\sac\src\coder\counter.h
 

@@ -36,8 +36,13 @@
 			<Add option="-Wall" />
 			<Add option="-fexceptions" />
 		</Compiler>
-		<Unit filename="src/coder/bit.cpp" />
-		<Unit filename="src/coder/bit.h" />
+		<Unit filename="src/codec.cpp" />
+		<Unit filename="src/codec.h" />
+		<Unit filename="src/coder/bufio.h" />
+		<Unit filename="src/coder/counter.h" />
+		<Unit filename="src/coder/range.cpp" />
+		<Unit filename="src/coder/range.h" />
+		<Unit filename="src/coder/rice.h" />
 		<Unit filename="src/file/file.cpp" />
 		<Unit filename="src/file/file.h" />
 		<Unit filename="src/file/sac.cpp" />
@@ -46,8 +51,6 @@
 		<Unit filename="src/file/wav.h" />
 		<Unit filename="src/global.h" />
 		<Unit filename="src/main.cpp" />
-		<Unit filename="src/model.cpp" />
-		<Unit filename="src/model.h" />
 		<Unit filename="src/pred/predictor.cpp" />
 		<Unit filename="src/pred/predictor.h" />
 		<Unit filename="src/utils.h" />

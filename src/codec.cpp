@@ -19,23 +19,33 @@ void Model::PredictMonoFrame(int ch,int numsamples)
 void Model::EncodeMonoFrame(int ch,int numsamples)
 {
   const int32_t *data=&(samplesdata[ch][0]);
+  BufIO &buf=samplesenc[ch];
+  buf.Reset();
 
-  RangeCoderSH Coder(samplesenc[ch]);
-  Coder.Init();
+  RangeCoderSH rc(buf);
+  rc.Init();
 
-  int K=5;
-  for (int i=0;i<numsamples;i++) {
-    int val=data[i];
-    if (val<0) val=2*(-val);
-    else if (val>0) val=(2*val)-1;
+  Rice ricecoder(rc);
 
-    int Q=val>>K;
-    int R=val&((1<<K)-1);
-
-    cout << "<" << Q << "," << R << ">";
-  }
-  Coder.Stop();
+  for (int i=0;i<numsamples;i++) ricecoder.Encode(data[i]);
+  rc.Stop();
 }
+
+void Model::DecodeMonoFrame(int ch,int numsamples)
+{
+  int32_t *data=&(samplestemp[ch][0]);
+  BufIO &buf=samplesenc[ch];
+  buf.Reset();
+
+  RangeCoderSH rc(buf,1);
+  rc.Init();
+
+  Rice ricecoder(rc);
+
+  for (int i=0;i<numsamples;i++) data[i]=ricecoder.Decode();
+  rc.Stop();
+}
+
 
 void Model::EncodeFile(Wav &myWav,Sac &mySac)
 {
@@ -44,8 +54,13 @@ void Model::EncodeFile(Wav &myWav,Sac &mySac)
   samplesdata.resize(myWav.getNumChannels());
   for (int i=0;i<myWav.getNumChannels();i++) samplesdata[i].resize(framesize);
 
+  samplestemp.resize(myWav.getNumChannels());
+  for (int i=0;i<myWav.getNumChannels();i++) samplestemp[i].resize(framesize);
+
+
   samplesenc.resize(myWav.getNumChannels());
 
+  mySac.WriteHeader();
   myWav.InitReader(framesize);
   int samplescoded=0;
   int samplestocode=myWav.getNumSamples();
@@ -57,6 +72,11 @@ void Model::EncodeFile(Wav &myWav,Sac &mySac)
     }
     for (int i=0;i<myWav.getNumChannels();i++) {
          EncodeMonoFrame(i,samplesread);
+         DecodeMonoFrame(i,samplesread);
+         for (int j=0;j<samplesread;j++)
+         {
+            if (samplesdata[i][j]!=samplestemp[i][j]) cout << "error: decoded sample: " << samplesdata[i][j] << " " << samplestemp[i][j] << endl;
+         }
     }
     for (int i=0;i<myWav.getNumChannels();i++) {
          uint8_t buf[4];
