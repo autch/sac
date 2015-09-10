@@ -19,10 +19,12 @@ class miscUtils {
    ostringstream ss;
    int h,m,s,ms;
    h=m=s=ms=0;
-   while (numsamples >= 3600*samplerate) {++h;numsamples-=3600*samplerate;};
-   while (numsamples >= 60*samplerate) {++m;numsamples-=60*samplerate;};
-   while (numsamples >= samplerate) {++s;numsamples-=samplerate;};
-   ms=round((numsamples*1000.)/samplerate);
+   if (numsamples>0 && samplerate>0) {
+     while (numsamples >= 3600*samplerate) {++h;numsamples-=3600*samplerate;};
+     while (numsamples >= 60*samplerate) {++m;numsamples-=60*samplerate;};
+     while (numsamples >= samplerate) {++s;numsamples-=samplerate;};
+     ms=round((numsamples*1000.)/samplerate);
+   }
    ss << setfill('0') << setw(2) << h << ":" << setw(2) << m << ":" << setw(2) << s << "." << ms;
    return ss.str();
  }

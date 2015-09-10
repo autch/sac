@@ -7,10 +7,11 @@
 #include "coder/range.h"
 #include "coder/rice.h"
 
-class Model {
+class Codec {
   public:
-    Model():framesize(0){};
+    Codec():framesize(0){};
     void EncodeFile(Wav &myWav,Sac &mySac);
+    void DecodeFile(Sac &mySac,Wav &myWav);
     void PredictMonoFrame(int ch,int numsamples);
     void EncodeMonoFrame(int ch,int numsamples);
     void DecodeMonoFrame(int ch,int numsamples);

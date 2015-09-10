@@ -17,7 +17,8 @@ class Chunks {
     uint32_t GetChunkSize(int chunk) const {return wavchunks[chunk].csize;};
     size_t GetChunkDataSize(int chunk) const {return wavchunks[chunk].data.size();};
     uint32_t GetMetaDataSize() const {return metadatasize;};
-    uint32_t StoreMetaData(vector <uint8_t>&data);
+    uint32_t PackMetaData(vector <uint8_t>&data);
+    void UnpackMetaData(const vector <uint8_t>&data);
   private:
     vector <tChunk> wavchunks;
     uint32_t metadatasize;
@@ -30,7 +31,7 @@ class Wav : public AudioFile {
     int ReadHeader();
     void InitReader(int maxframesize);
     int ReadSamples(vector <vector <int32_t>>&data,int samplestoread);
-    Chunks &getChunks(){return myChunks;};
+    Chunks &GetChunks(){return myChunks;};
   private:
     Chunks myChunks;
     vector <uint8_t>readbuf;

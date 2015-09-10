@@ -4,13 +4,13 @@
 #include "file/wav.h"
 #include "file/sac.h"
 
-void PrintInfo(const Wav &myWav)
+void PrintInfo(const AudioFile &myWav)
 {
   cout << "  WAVE  Codec: PCM (" << myWav.getKBPS() << " kbps)\n";
   cout << "  " << myWav.getSampleRate() << "Hz " << myWav.getBitsPerSample() << " Bit  ";
   if (myWav.getNumChannels()==1) cout << "Mono";
   else if (myWav.getNumChannels()==2) cout << "Stereo";
-  else cout << myWav.getNumChannels() << "Channels";
+  else cout << myWav.getNumChannels() << " Channels";
   cout << "\n";
   cout << "  " << myWav.getNumSamples() << " Samples [" << miscUtils::getTimeFromSamples(myWav.getNumSamples(),myWav.getSampleRate()) << "]\n";
 }
@@ -60,15 +60,25 @@ int main(int argc,char *argv[])
          if (mySac.OpenWrite(soutputfile)==0) {
            cout << "ok\n";
            PrintInfo(myWav);
-           Model myModel;
-           myModel.EncodeFile(myWav,mySac);
+           Codec myCodec;
+           myCodec.EncodeFile(myWav,mySac);
            cout << mySac.readFileSize() << " Bytes\n";
            mySac.Close();
          } else cout << "could not create\n";
-      } else cout << "warning: input is not a valid wave file\n";
+      } else cout << "warning: input is not a valid .wav file\n";
       myWav.Close();
     } else cout << "could not open\n";
   } else if (mode==1) {
+    cout << "Open: '" << sinputfile << "': ";
+    Sac mySac;
+    if (mySac.OpenRead(sinputfile)==0) {
+      cout << "ok (" << mySac.getFileSize() << " Bytes)\n";
+      Wav myWav;
+      if (mySac.ReadHeader(myWav)==0) {
+           PrintInfo(mySac);
+      } else cout << "warning: input is not a valid .sac file\n";
+      mySac.Close();
+    }
   }
   return 0;
 }

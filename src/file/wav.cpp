@@ -13,10 +13,10 @@ void Chunks::Append(uint32_t chunkid,uint32_t chunksize,uint8_t *data,uint32_t l
   metadatasize+=(8+len);
 }
 
-uint32_t Chunks::StoreMetaData(vector <uint8_t>&data)
+uint32_t Chunks::PackMetaData(vector <uint8_t>&data)
 {
   data.resize(metadatasize);
-  uint32_t ofs=0;
+  size_t ofs=0;
   for (size_t i=0;i<GetNumChunks();i++) {
     const tChunk &wavchunk=wavchunks[i];
     binUtils::put32LH(&data[ofs],wavchunk.id);ofs+=4;
@@ -25,6 +25,18 @@ uint32_t Chunks::StoreMetaData(vector <uint8_t>&data)
     ofs+=wavchunk.data.size();
   }
   return ofs;
+}
+
+void Chunks::UnpackMetaData(const vector <uint8_t>&data)
+{
+  size_t ofs=0;
+  while (ofs<data.size()) {
+    uint32_t chunkid,chunksize;
+    chunkid=binUtils::get32LH(&data[ofs]);ofs+=4;
+    chunksize=binUtils::get32LH(&data[ofs]);ofs+=4;
+    cout << chunkid << " " << chunksize << endl;
+    ofs+=chunksize;
+  }
 }
 
 void Wav::InitReader(int maxframesize)

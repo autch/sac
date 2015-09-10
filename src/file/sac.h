@@ -8,14 +8,15 @@
 class Sac : public AudioFile
 {
   public:
+    Sac():AudioFile(){};
     Sac(Wav &file)
-    :AudioFile(file),myChunks(file.getChunks())
+    :AudioFile(file)
     {
 
     }
-    int WriteHeader();
+    int WriteHeader(Wav &myWav);
+    int ReadHeader(Wav &myWav);
   private:
-    Chunks &myChunks;
 };
 
 

@@ -1,6 +1,6 @@
 #include "codec.h"
 
-void Model::PredictMonoFrame(int ch,int numsamples)
+void Codec::PredictMonoFrame(int ch,int numsamples)
 {
   O1Pred myPred;
   int32_t *data=&(samplesdata[ch][0]);
@@ -16,7 +16,7 @@ void Model::PredictMonoFrame(int ch,int numsamples)
   }
 }
 
-void Model::EncodeMonoFrame(int ch,int numsamples)
+void Codec::EncodeMonoFrame(int ch,int numsamples)
 {
   const int32_t *data=&(samplesdata[ch][0]);
   BufIO &buf=samplesenc[ch];
@@ -31,7 +31,7 @@ void Model::EncodeMonoFrame(int ch,int numsamples)
   rc.Stop();
 }
 
-void Model::DecodeMonoFrame(int ch,int numsamples)
+void Codec::DecodeMonoFrame(int ch,int numsamples)
 {
   int32_t *data=&(samplestemp[ch][0]);
   BufIO &buf=samplesenc[ch];
@@ -47,7 +47,7 @@ void Model::DecodeMonoFrame(int ch,int numsamples)
 }
 
 
-void Model::EncodeFile(Wav &myWav,Sac &mySac)
+void Codec::EncodeFile(Wav &myWav,Sac &mySac)
 {
   framesize=1*myWav.getSampleRate();
 
@@ -60,7 +60,7 @@ void Model::EncodeFile(Wav &myWav,Sac &mySac)
 
   samplesenc.resize(myWav.getNumChannels());
 
-  mySac.WriteHeader();
+  mySac.WriteHeader(myWav);
   myWav.InitReader(framesize);
   int samplescoded=0;
   int samplestocode=myWav.getNumSamples();
@@ -81,6 +81,7 @@ void Model::EncodeFile(Wav &myWav,Sac &mySac)
     for (int i=0;i<myWav.getNumChannels();i++) {
          uint8_t buf[4];
          binUtils::put32LH(buf,samplesenc[i].GetBufPos());
+         mySac.file.write((char*)buf,4);
          mySac.WriteData(samplesenc[i].GetBuf(),samplesenc[i].GetBufPos());
     }
 
@@ -92,4 +93,10 @@ void Model::EncodeFile(Wav &myWav,Sac &mySac)
   }
   cout << "\n";
 }
+
+void Codec::DecodeFile(Sac &mySac,Wav &myWav)
+{
+
+}
+
 
