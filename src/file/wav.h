@@ -5,38 +5,48 @@
 #include "../utils.h"
 
 class Chunks {
-  struct tChunk {
-    uint32_t id,csize;
-    vector <uint8_t>data;
-  };
   public:
+    struct tChunk {
+      uint32_t id,csize;
+      vector <uint8_t>data;
+    };
     Chunks():metadatasize(0){};
-    void Append(uint32_t chunkid,uint32_t chunksize,uint8_t *data,uint32_t len);
+    void Append(uint32_t chunkid,uint32_t chunksize,const uint8_t *data,uint32_t len);
     size_t GetNumChunks() const {return wavchunks.size();};
     uint32_t GetChunkID(int chunk) const {return wavchunks[chunk].id;};
     uint32_t GetChunkSize(int chunk) const {return wavchunks[chunk].csize;};
     size_t GetChunkDataSize(int chunk) const {return wavchunks[chunk].data.size();};
     uint32_t GetMetaDataSize() const {return metadatasize;};
-    uint32_t PackMetaData(vector <uint8_t>&data);
-    void UnpackMetaData(const vector <uint8_t>&data);
-  private:
+    size_t PackMetaData(vector <uint8_t>&data);
+    size_t UnpackMetaData(const vector <uint8_t>&data);
     vector <tChunk> wavchunks;
+  private:
     uint32_t metadatasize;
 };
 
 class Wav : public AudioFile {
   public:
     Wav(bool verbose=false)
-    :datapos(0),endofdata(0),byterate(0),blockalign(0),samplesleft(0),seektodatapos(true),verbose(verbose){};
+    :chunkpos(0),datapos(0),endofdata(0),byterate(0),blockalign(0),samplesleft(0),verbose(verbose){};
+    Wav(AudioFile &file,bool verbose=false)
+    :AudioFile(file),chunkpos(0),verbose(verbose)
+    {
+      byterate=samplerate*numchannels*bitspersample/8;
+      blockalign=numchannels*bitspersample/8;
+      kbps=(samplerate*numchannels*bitspersample)/1000;
+    };
     int ReadHeader();
-    void InitReader(int maxframesize);
+    int WriteHeader();
+    void InitFileBuf(int maxframesize);
     int ReadSamples(vector <vector <int32_t>>&data,int samplestoread);
+    int WriteSamples(vector <vector <int32_t>>&data,int samplestowrite);
     Chunks &GetChunks(){return myChunks;};
   private:
     Chunks myChunks;
-    vector <uint8_t>readbuf;
+    size_t chunkpos;
+    vector <uint8_t>filebuffer;
     streampos datapos,endofdata;
     int byterate,blockalign,samplesleft;
-    bool seektodatapos,verbose;
+    bool verbose;
 };
 #endif // WAV_H

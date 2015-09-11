@@ -73,9 +73,16 @@ int main(int argc,char *argv[])
     Sac mySac;
     if (mySac.OpenRead(sinputfile)==0) {
       cout << "ok (" << mySac.getFileSize() << " Bytes)\n";
-      Wav myWav;
-      if (mySac.ReadHeader(myWav)==0) {
+      if (mySac.ReadHeader()==0) {
            PrintInfo(mySac);
+           Wav myWav(mySac,true);
+           cout << "Create: '" << soutputfile << "': ";
+           if (myWav.OpenWrite(soutputfile)==0) {
+             cout << "ok\n";
+             Codec myCodec;
+             myCodec.DecodeFile(mySac,myWav);
+             myWav.Close();
+           } else cout << "could not create\n";
       } else cout << "warning: input is not a valid .sac file\n";
       mySac.Close();
     }

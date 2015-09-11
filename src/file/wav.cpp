@@ -1,6 +1,6 @@
 #include "wav.h"
 
-void Chunks::Append(uint32_t chunkid,uint32_t chunksize,uint8_t *data,uint32_t len)
+void Chunks::Append(uint32_t chunkid,uint32_t chunksize,const uint8_t *data,uint32_t len)
 {
   tChunk chunk;
   chunk.id=chunkid;
@@ -13,7 +13,7 @@ void Chunks::Append(uint32_t chunkid,uint32_t chunksize,uint8_t *data,uint32_t l
   metadatasize+=(8+len);
 }
 
-uint32_t Chunks::PackMetaData(vector <uint8_t>&data)
+size_t Chunks::PackMetaData(vector <uint8_t>&data)
 {
   data.resize(metadatasize);
   size_t ofs=0;
@@ -27,21 +27,23 @@ uint32_t Chunks::PackMetaData(vector <uint8_t>&data)
   return ofs;
 }
 
-void Chunks::UnpackMetaData(const vector <uint8_t>&data)
+size_t Chunks::UnpackMetaData(const vector <uint8_t>&data)
 {
   size_t ofs=0;
   while (ofs<data.size()) {
     uint32_t chunkid,chunksize;
     chunkid=binUtils::get32LH(&data[ofs]);ofs+=4;
     chunksize=binUtils::get32LH(&data[ofs]);ofs+=4;
-    cout << chunkid << " " << chunksize << endl;
-    ofs+=chunksize;
+    if (chunkid==0x46464952) {Append(chunkid,chunksize,&data[ofs],4);ofs+=4;}
+    else if (chunkid==0x61746164) {Append(chunkid,chunksize,NULL,0);}
+    else {Append(chunkid,chunksize,&data[ofs],chunksize);ofs+=chunksize;};
   }
+  return ofs;
 }
 
-void Wav::InitReader(int maxframesize)
+void Wav::InitFileBuf(int maxframesize)
 {
-  readbuf.resize(maxframesize*blockalign);
+  filebuffer.resize(maxframesize*blockalign);
 }
 
 int Wav::ReadSamples(vector <vector <int32_t>>&data,int samplestoread)
@@ -49,17 +51,17 @@ int Wav::ReadSamples(vector <vector <int32_t>>&data,int samplestoread)
   // read samples
   if (samplestoread>samplesleft) samplestoread=samplesleft;
   int bytestoread=samplestoread*blockalign;
-  file.read(reinterpret_cast<char*>(&readbuf[0]),bytestoread);
+  file.read(reinterpret_cast<char*>(&filebuffer[0]),bytestoread);
   int samplesread=(file.gcount()/blockalign);
   samplesleft-=samplesread;
   if (samplesread!=samplestoread) cout << "warning: read over eof\n";
 
   // decode samples
   int bufptr=0;
-  for (int i=0;i<samplesread;i++) {
-    for (int k=0;k<getNumChannels();k++) {
+  for (int i=0;i<samplesread;i++) { // unpack samples
+    for (int k=0;k<numchannels;k++) {
         //int sample2=binUtils::cnvU2S(binUtils::get16LH((uint8_t*)(&readbuf[bufptr])),getBitsPerSample());
-        int16_t sample=((readbuf[bufptr+1]<<8)|readbuf[bufptr]);bufptr+=2;
+        int16_t sample=((filebuffer[bufptr+1]<<8)|filebuffer[bufptr]);bufptr+=2;
         data[k][i]=sample;
     }
   }
@@ -67,8 +69,25 @@ int Wav::ReadSamples(vector <vector <int32_t>>&data,int samplestoread)
   return samplesread;
 }
 
+int Wav::WriteSamples(vector <vector <int32_t>>&data,int samplestowrite)
+{
+  int bufptr=0;
+  for (int i=0;i<samplestowrite;i++) { // pack samples
+    for (int k=0;k<numchannels;k++) {
+        int16_t sample=data[k][i];
+        filebuffer[bufptr]=sample&0xff;
+        filebuffer[bufptr+1]=(sample>>8)&0xff;
+        bufptr+=2;
+    }
+  }
+  int bytestowrite=samplestowrite*blockalign;
+  file.write(reinterpret_cast<char*>(&filebuffer[0]),bytestowrite);
+  return 0;
+}
+
 int Wav::ReadHeader()
 {
+  bool seektodatapos=true;
   uint8_t buf[32];
   vector <uint8_t> vbuf;
   uint32_t chunkid,chunksize;
@@ -104,7 +123,7 @@ int Wav::ReadHeader()
             kbps=(samplerate*numchannels*bitspersample)/1000;
         }
       } else if (chunkid==0x61746164) { // 'data' chunk
-        myChunks.Append(chunkid,chunksize,buf,0);
+        myChunks.Append(chunkid,chunksize,NULL,0);
         datapos=file.tellg();
         numsamples=chunksize/numchannels/(bitspersample/8);
         samplesleft=numsamples;
@@ -131,3 +150,22 @@ int Wav::ReadHeader()
   if (seektodatapos) {file.seekg(datapos);seektodatapos=false;};
   return 0;
 }
+
+int Wav::WriteHeader()
+{
+  uint8_t buf[8];
+  while (chunkpos<myChunks.GetNumChunks())
+  {
+    const Chunks::tChunk &chunk=myChunks.wavchunks[chunkpos++];
+    binUtils::put32LH(buf+0,chunk.id);
+    binUtils::put32LH(buf+4,chunk.csize);
+    file.write((char*)buf,8);
+    if (chunk.id==0x61746164) break;
+    else {
+       if (verbose) cout << " chunk size " << chunk.data.size() << endl;
+       WriteData(chunk.data,chunk.data.size());
+    }
+  }
+  return 0;
+}
+

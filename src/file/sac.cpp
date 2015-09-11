@@ -22,19 +22,25 @@ int Sac::WriteHeader(Wav &myWav)
   return 0;
 }
 
-int Sac::ReadHeader(Wav &myWav)
+int Sac::UnpackMetaData(Wav &myWav)
+{
+  size_t unpackedbytes=myWav.GetChunks().UnpackMetaData(metadata);
+  if (metadatasize!=unpackedbytes) {cerr << "  warning: unpackmetadata mismatch\n";return 1;}
+  else return 0;
+}
+
+int Sac::ReadHeader()
 {
   uint8_t buf[32];
-  vector <uint8_t>metadata;
   file.read((char*)buf,24);
   if (buf[0]=='S' && buf[1]=='A' && buf[2]=='C' && buf[3]=='2') {
     numchannels=binUtils::get16LH(buf+4);
     samplerate=binUtils::get32LH(buf+6);
     bitspersample=binUtils::get16LH(buf+10);
     numsamples=binUtils::get32LH(buf+12);
-    uint32_t metadatasize=binUtils::get32LH(buf+20);
+    metadatasize=binUtils::get32LH(buf+20);
     ReadData(metadata,metadatasize);
-    myWav.GetChunks().UnpackMetaData(metadata);
+
     return 0;
   } else return 1;
 }

@@ -11,7 +11,7 @@
 				<Option object_output="obj/Debug/" />
 				<Option type="1" />
 				<Option compiler="gcc" />
-				<Option parameters="--decode C:\Code\Gorgoroth.sac c:\code\temp.wav" />
+				<Option parameters="--encode C:\Code\Gorgoroth.wav c:\code\Gorogorth.sac" />
 				<Compiler>
 					<Add option="-Wall" />
 					<Add option="-std=c++11" />

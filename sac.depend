@@ -1,5 +1,5 @@
 # depslib dependency file v1.0
-1441899760 source:c:\code\projects\sac\src\main.cpp
+1441976480 source:c:\code\projects\sac\src\main.cpp
 	"global.h"
 	"codec.h"
 	"utils.h"
@@ -44,25 +44,25 @@
 	"file/sac.h"
 	"pred/predictor.h"
 
-1441901245 c:\code\projects\sac\src\file\wav.h
+1441977148 c:\code\projects\sac\src\file\wav.h
 	"file.h"
 	"../utils.h"
 
 1441900342 c:\code\projects\sac\src\file\file.h
 	"../global.h"
 
-1441816582 source:c:\code\projects\sac\src\file\file.cpp
+1441973436 source:c:\code\projects\sac\src\file\file.cpp
 	"file.h"
 
-1441901257 source:c:\code\projects\sac\src\file\sac.cpp
+1441976328 source:c:\code\projects\sac\src\file\sac.cpp
 	"sac.h"
 
-1441899525 c:\code\projects\sac\src\file\sac.h
+1441976320 c:\code\projects\sac\src\file\sac.h
 	"file.h"
 	"wav.h"
 	"../utils.h"
 
-1441901320 source:c:\code\projects\sac\src\file\wav.cpp
+1441977473 source:c:\code\projects\sac\src\file\wav.cpp
 	"wav.h"
 
 1441731697 c:\code\projects\sac\src\pred\predictor.h
@@ -86,10 +86,10 @@
 1441816559 c:\code\projects\sac\src\coder\bit.h
 	"../global.h"
 
-1441900335 source:c:\code\projects\sac\src\codec.cpp
+1441977467 source:c:\code\projects\sac\src\codec.cpp
 	"codec.h"
 
-1441898910 c:\code\projects\sac\src\codec.h
+1441973734 c:\code\projects\sac\src\codec.h
 	"file/wav.h"
 	"file/sac.h"
 	"pred/predictor.h"
