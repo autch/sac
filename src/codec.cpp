@@ -19,34 +19,42 @@ void FrameCoder::Init(int numch,int framesz)
 
 void FrameCoder::PredictMonoFrame(int ch,int numsamples)
 {
-  O1Pred myPred;
+  O1Pred myPred(31,5);
+  LPC myLPC(0.98,8,32);
   const int32_t *src=&(samples[ch][0]);
   int32_t *dst=&(error[ch][0]);
 
   for (int i=0;i<numsamples;i++) {
     int32_t val=src[i];
-    int32_t pred=myPred.Predict();
 
-    int32_t err=val-pred;
+    int32_t err1=val-myPred.Predict();
+    int32_t err2=err1-myLPC.Predict();
 
-    dst[i]=err;
+    dst[i]=err2;
+
+    myLPC.Update(err1);
     myPred.Update(val);
   }
 }
 
 void FrameCoder::UnpredictMonoFrame(int ch,int numsamples)
 {
-  O1Pred myPred;
+  O1Pred myPred(31,5);
+  LPC myLPC(0.98,8,32);
+
   const int32_t *src=&(error[ch][0]);
   int32_t *dst=&(samples[ch][0]);
 
   for (int i=0;i<numsamples;i++) {
-    int32_t err=src[i];
-    int32_t pred=myPred.Predict();
+    int32_t pred1=myPred.Predict();
+    int32_t pred2=myLPC.Predict();
 
-    int32_t val=err+pred;
+    int32_t err1=src[i]+pred2;
+    int32_t val=err1+pred1;
 
     dst[i]=val;
+
+    myLPC.Update(err1);
     myPred.Update(val);
   }
 }
@@ -61,9 +69,8 @@ void FrameCoder::EncodeMonoFrame(int ch,int numsamples)
   RangeCoderSH rc(buf);
   rc.Init();
 
-  Rice ricecoder(rc);
-
-  for (int i=0;i<numsamples;i++) ricecoder.Encode(src[i]);
+  Golomb vle(rc);
+  for (int i=0;i<numsamples;i++) vle.Encode(src[i]);
   rc.Stop();
 }
 
@@ -76,9 +83,9 @@ void FrameCoder::DecodeMonoFrame(int ch,int numsamples)
   RangeCoderSH rc(buf,1);
   rc.Init();
 
-  Rice ricecoder(rc);
+  Golomb vle(rc);
 
-  for (int i=0;i<numsamples;i++) dst[i]=ricecoder.Decode();
+  for (int i=0;i<numsamples;i++) dst[i]=vle.Decode();
   rc.Stop();
 }
 
@@ -108,12 +115,12 @@ void FrameCoder::WriteEncoded(AudioFile &fout)
   uint8_t buf[4];
   binUtils::put32LH(buf,numsamples);
   fout.file.write(reinterpret_cast<char*>(buf),4);
-  cout << "numsamples: " << numsamples << endl;
-  cout << " filepos:   " << fout.file.tellg() << endl;
+  //cout << "numsamples: " << numsamples << endl;
+  //cout << " filepos:   " << fout.file.tellg() << endl;
   for (int ch=0;ch<numchannels;ch++) {
     uint32_t blocksize=encoded[ch].GetBufPos();
     binUtils::put32LH(buf,blocksize);
-    cout << " blocksize: " << blocksize << endl;
+    //cout << " blocksize: " << blocksize << endl;
     fout.file.write(reinterpret_cast<char*>(buf),4);
     fout.WriteData(encoded[ch].GetBuf(),blocksize);
   }
@@ -132,6 +139,12 @@ void FrameCoder::ReadEncoded(AudioFile &fin)
     //cout << " blocksize: " << blocksize << endl;
     fin.ReadData(encoded[ch].GetBuf(),blocksize);
   }
+}
+
+void Codec::PrintProgress(int samplesprocessed,int totalsamples)
+{
+  double r=samplesprocessed*100.0/(double)totalsamples;
+  cout << "  " << samplesprocessed << "/" << totalsamples << ":" << setw(6) << miscUtils::ConvertFixed(r,1) << "%\r";
 }
 
 void Codec::EncodeFile(Wav &myWav,Sac &mySac)
@@ -155,9 +168,7 @@ void Codec::EncodeFile(Wav &myWav,Sac &mySac)
     myFrame.WriteEncoded(mySac);
 
     samplescoded+=samplesread;
-    double r=samplescoded*100.0/(double)myWav.getNumSamples();
-    cout << "  " << samplescoded << "/" << myWav.getNumSamples() << ":" << setw(6) << miscUtils::ConvertFixed(r,1) << "%\r";
-
+    PrintProgress(samplescoded,myWav.getNumSamples());
     samplestocode-=samplesread;
   }
   cout << endl;
@@ -181,11 +192,9 @@ void Codec::DecodeFile(Sac &mySac,Wav &myWav)
     myFrame.Decode();
     myFrame.Unpredict();
     myWav.WriteSamples(myFrame.samples,myFrame.GetNumSamples());
+
     samplesdecoded+=myFrame.GetNumSamples();
-
-    double r=samplesdecoded*100.0/(double)myWav.getNumSamples();
-    cout << "  " << samplesdecoded << "/" << myWav.getNumSamples() << ":" << setw(6) << miscUtils::ConvertFixed(r,1) << "%\r";
-
+    PrintProgress(samplesdecoded,myWav.getNumSamples());
     samplestodecode-=myFrame.GetNumSamples();
   }
   myWav.WriteHeader();

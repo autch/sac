@@ -5,7 +5,7 @@ class Prob16Counter
 {
   public:
     uint16_t p1;
-    Prob16Counter():p1(0){};
+    Prob16Counter():p1(PSCALEh){};
   protected:
     int idiv(int val,int s) {return (val+(1<<(s-1)))>>s;};
     int idiv_signed(int val,int s){return val<0?-(((-val)+(1<<(s-1)))>>s):(val+(1<<(s-1)))>>s;};
@@ -15,7 +15,7 @@ class Prob16Counter
 class LinearCounter16 : public Prob16Counter
 {
   public:
-    LinearCounter16():Prob16Counter(){};
+    using Prob16Counter::Prob16Counter;
     //p'=(1-w0)*p+w0*((1-w1)*bit+w1*0.5)
     #define wh(w) ((w*PSCALEh+PSCALEh)>>PBITS)
     void update(int bit,const int w0,const int w1)

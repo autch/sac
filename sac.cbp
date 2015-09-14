@@ -11,7 +11,7 @@
 				<Option object_output="obj/Debug/" />
 				<Option type="1" />
 				<Option compiler="gcc" />
-				<Option parameters="--encode C:\Code\Gorgoroth.wav c:\code\Gorogorth.sac" />
+				<Option parameters="--encode C:\Code\Gorgoroth.wav c:\code\test3.sac" />
 				<Compiler>
 					<Add option="-Wall" />
 					<Add option="-std=c++11" />
@@ -42,7 +42,7 @@
 		<Unit filename="src/coder/counter.h" />
 		<Unit filename="src/coder/range.cpp" />
 		<Unit filename="src/coder/range.h" />
-		<Unit filename="src/coder/rice.h" />
+		<Unit filename="src/coder/vle.h" />
 		<Unit filename="src/file/file.cpp" />
 		<Unit filename="src/file/file.h" />
 		<Unit filename="src/file/sac.cpp" />

@@ -11,10 +11,28 @@ class strUtils {
       }
 };
 
+class MathUtils {
+  public:
+      static int iLog2(int val) {
+        int nbits=0;
+        while (val>>=1) nbits++;
+        return nbits;
+      }
+      static double SumDiff(const Vector &v1,const Vector &v2)
+      {
+         if (v1.size()!=v2.size()) return -1;
+         else {
+           double sum=0.;
+           for (size_t i=0;i<v1.size();i++) sum+=fabs(v1[i]-v2[i]);
+           return sum;
+         }
+      }
+};
+
 class miscUtils {
   public:
   // retrieve time string
-  static string getTimeFromSamples(int numsamples,int samplerate)
+  static string getTimeStrFromSamples(int numsamples,int samplerate)
   {
    ostringstream ss;
    int h,m,s,ms;
@@ -26,6 +44,19 @@ class miscUtils {
      ms=round((numsamples*1000.)/samplerate);
    }
    ss << setfill('0') << setw(2) << h << ":" << setw(2) << m << ":" << setw(2) << s << "." << ms;
+   return ss.str();
+ }
+ static string getTimeStrFromSeconds(int seconds)
+ {
+   ostringstream ss;
+   int h,m,s;
+   h=m=s=0;
+   if (seconds>0) {
+      while (seconds >= 3600) {++h;seconds-=3600;};
+      while (seconds >= 60) {++m;seconds-=60;};
+      s=seconds;
+   }
+   ss << setfill('0') << setw(2) << h << ":" << setw(2) << m << ":" << setw(2) << s;
    return ss.str();
  }
  static string ConvertFixed(double val,int digits)

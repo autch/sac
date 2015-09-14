@@ -1,8 +1,11 @@
 #include "global.h"
 #include "codec.h"
 #include "utils.h"
+#include "timer.h"
 #include "file/wav.h"
 #include "file/sac.h"
+#include "math/cholesky.h"
+#include "math/cov.h"
 
 void PrintInfo(const AudioFile &myWav)
 {
@@ -12,11 +15,16 @@ void PrintInfo(const AudioFile &myWav)
   else if (myWav.getNumChannels()==2) cout << "Stereo";
   else cout << myWav.getNumChannels() << " Channels";
   cout << "\n";
-  cout << "  " << myWav.getNumSamples() << " Samples [" << miscUtils::getTimeFromSamples(myWav.getNumSamples(),myWav.getSampleRate()) << "]\n";
+  cout << "  " << myWav.getNumSamples() << " Samples [" << miscUtils::getTimeStrFromSamples(myWav.getNumSamples(),myWav.getSampleRate()) << "]\n";
 }
 
 int main(int argc,char *argv[])
 {
+  /*Cholesky myChol;
+  cout << " test Cholesky Decomposition: ";
+  if (myChol.Test()) cout << "ok" << endl;
+  else cout << "error" << endl;*/
+
   cout << "Sac v0.0.1 - Lossless Audio Coder (c) Sebastian Lehmann\n";
   cout << "compiled on " << __DATE__ << " ";
   #ifdef __x86_64
@@ -49,6 +57,9 @@ int main(int argc,char *argv[])
        else soutputfile=param;
     }
   }
+  Timer myTimer;
+  myTimer.start();
+
   if (mode==0) {
     Wav myWav(true);
     cout << "Open: '" << sinputfile << "': ";
@@ -62,7 +73,11 @@ int main(int argc,char *argv[])
            PrintInfo(myWav);
            Codec myCodec;
            myCodec.EncodeFile(myWav,mySac);
-           cout << mySac.readFileSize() << " Bytes\n";
+           uint64_t infilesize=myWav.getFileSize();
+           uint64_t outfilesize=mySac.readFileSize();
+           double r=0.;
+           if (outfilesize) r=outfilesize*100./infilesize;
+           cout << endl << "  " << infilesize << "->" << outfilesize<< "=" <<miscUtils::ConvertFixed(r,2) << "%"<<endl;
            mySac.Close();
          } else cout << "could not create\n";
       } else cout << "warning: input is not a valid .wav file\n";
@@ -87,5 +102,9 @@ int main(int argc,char *argv[])
       mySac.Close();
     }
   }
+
+  myTimer.stop();
+  cout << "  Time:   [" << miscUtils::getTimeStrFromSeconds(round(myTimer.elapsedS())) << "]" << endl;
+
   return 0;
 }

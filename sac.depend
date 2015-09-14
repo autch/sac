@@ -1,19 +1,23 @@
 # depslib dependency file v1.0
-1441976480 source:c:\code\projects\sac\src\main.cpp
+1442257358 source:c:\code\projects\sac\src\main.cpp
 	"global.h"
 	"codec.h"
 	"utils.h"
+	"timer.h"
 	"file/wav.h"
 	"file/sac.h"
+	"math/cholesky.h"
+	"math/cov.h"
 
-1441889673 c:\code\projects\sac\src\global.h
+1442244777 c:\code\projects\sac\src\global.h
 	<iostream>
 	<algorithm>
 	<fstream>
 	<sstream>
 	<iomanip>
+	<chrono>
 
-1441899801 c:\code\projects\sac\src\utils.h
+1442244792 c:\code\projects\sac\src\utils.h
 	"global.h"
 
 1441725580 source:c:\code\projects\sac\src\wav.cpp
@@ -65,8 +69,10 @@
 1441977473 source:c:\code\projects\sac\src\file\wav.cpp
 	"wav.h"
 
-1441731697 c:\code\projects\sac\src\pred\predictor.h
+1442258165 c:\code\projects\sac\src\pred\predictor.h
 	"../global.h"
+	"../math/cholesky.h"
+	"../math/cov.h"
 
 1441731086 source:c:\code\projects\sac\src\pred\predictor.cpp
 	"predictor.h"
@@ -86,28 +92,52 @@
 1441816559 c:\code\projects\sac\src\coder\bit.h
 	"../global.h"
 
-1441977467 source:c:\code\projects\sac\src\codec.cpp
+1442258696 source:c:\code\projects\sac\src\codec.cpp
 	"codec.h"
 
-1441973734 c:\code\projects\sac\src\codec.h
+1441986341 c:\code\projects\sac\src\codec.h
 	"file/wav.h"
 	"file/sac.h"
 	"pred/predictor.h"
 	"coder/range.h"
-	"coder/rice.h"
+	"coder/vle.h"
 
-1441882066 c:\code\projects\sac\src\coder\range.h
+1442092140 c:\code\projects\sac\src\coder\range.h
 	"bufio.h"
 
 1441882052 c:\code\projects\sac\src\coder\bufio.h
 	"../global.h"
 
-1441881974 source:c:\code\projects\sac\src\coder\range.cpp
+1442088091 source:c:\code\projects\sac\src\coder\range.cpp
 	"range.h"
 
 1441898746 c:\code\projects\sac\src\coder\rice.h
 	"range.h"
 	"counter.h"
 
-1441889639 c:\code\projects\sac\src\coder\counter.h
+1442089119 c:\code\projects\sac\src\coder\counter.h
+
+1442230061 c:\code\projects\sac\src\coder\vle.h
+	"range.h"
+	"counter.h"
+
+1442228931 c:\code\projects\sac\src\timer.h
+	"global.h"
+
+1442257997 c:\code\projects\sac\src\math\cholesky.h
+	"../global.h"
+	"../utils.h"
+	"matrix.h"
+
+1442258031 source:c:\code\projects\sac\src\math\cholesky.cpp
+	"cholesky.h"
+
+1442244947 c:\code\projects\sac\src\math\matrix.h
+	"../global.h"
+
+1442249775 c:\code\projects\sac\src\math\corr.h
+	"matrix.h"
+
+1442256106 c:\code\projects\sac\src\math\cov.h
+	"matrix.h"
 

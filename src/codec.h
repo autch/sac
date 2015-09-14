@@ -1,11 +1,11 @@
-#ifndef CODER_H
-#define CODER_H
+#ifndef CODEC_H
+#define CODEC_H
 
 #include "file/wav.h"
 #include "file/sac.h"
 #include "pred/predictor.h"
 #include "coder/range.h"
-#include "coder/rice.h"
+#include "coder/vle.h"
 
 class FrameCoder {
   public:
@@ -36,12 +36,9 @@ class Codec {
     void EncodeFile(Wav &myWav,Sac &mySac);
     void DecodeFile(Sac &mySac,Wav &myWav);
   private:
+    void PrintProgress(int samplesprocessed,int totalsamples);
     int framesize;
     FrameCoder myFrame;
-
-    /*vector<vector<int32_t>>samplesdata;
-    vector<vector<int32_t>>samplestemp;
-    vector<BufIO>samplesenc;*/
 };
 
-#endif // CODER_H
+#endif

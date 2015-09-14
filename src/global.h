@@ -6,8 +6,13 @@
 #include <fstream>
 #include <sstream>
 #include <iomanip>
+#include <chrono>
 
 using namespace std;
+
+typedef vector <double> Vector;
+
+#define EPS (1E-14)
 
 #define DO(n) for (uint32_t _=0;_<n;_++)
 
