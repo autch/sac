@@ -1,40 +1,10 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
 <CodeBlocks_layout_file>
 	<FileVersion major="1" minor="0" />
-	<ActiveTarget name="Debug" />
-	<File name="src\codec.h" open="1" top="0" tabpos="12" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+	<ActiveTarget name="Release" />
+	<File name="src\global.h" open="1" top="0" tabpos="2" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
 		<Cursor>
-			<Cursor1 position="30" topLine="0" />
-		</Cursor>
-	</File>
-	<File name="src\coder\bufio.h" open="1" top="0" tabpos="17" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="0" topLine="0" />
-		</Cursor>
-	</File>
-	<File name="src\coder\counter.h" open="1" top="0" tabpos="16" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="824" topLine="6" />
-		</Cursor>
-	</File>
-	<File name="src\coder\range.cpp" open="1" top="0" tabpos="15" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="674" topLine="18" />
-		</Cursor>
-	</File>
-	<File name="src\coder\range.h" open="1" top="0" tabpos="14" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="1495" topLine="0" />
-		</Cursor>
-	</File>
-	<File name="src\coder\vle.h" open="1" top="1" tabpos="18" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="3501" topLine="90" />
-		</Cursor>
-	</File>
-	<File name="src\file\file.cpp" open="1" top="0" tabpos="11" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="416" topLine="0" />
+			<Cursor1 position="221" topLine="0" />
 		</Cursor>
 	</File>
 	<File name="src\file\file.h" open="1" top="0" tabpos="4" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
@@ -42,14 +12,14 @@
 			<Cursor1 position="993" topLine="0" />
 		</Cursor>
 	</File>
-	<File name="src\file\sac.cpp" open="1" top="0" tabpos="7" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+	<File name="src\utils.h" open="1" top="0" tabpos="3" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
 		<Cursor>
-			<Cursor1 position="401" topLine="16" />
+			<Cursor1 position="562" topLine="6" />
 		</Cursor>
 	</File>
-	<File name="src\file\sac.h" open="1" top="0" tabpos="6" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+	<File name="src\codec.cpp" open="1" top="0" tabpos="13" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
 		<Cursor>
-			<Cursor1 position="354" topLine="0" />
+			<Cursor1 position="2640" topLine="104" />
 		</Cursor>
 	</File>
 	<File name="src\file\wav.cpp" open="1" top="0" tabpos="8" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
@@ -57,19 +27,14 @@
 			<Cursor1 position="2514" topLine="57" />
 		</Cursor>
 	</File>
+	<File name="src\timer.h" open="1" top="0" tabpos="19" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="796" topLine="0" />
+		</Cursor>
+	</File>
 	<File name="src\file\wav.h" open="1" top="0" tabpos="5" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
 		<Cursor>
 			<Cursor1 position="1530" topLine="21" />
-		</Cursor>
-	</File>
-	<File name="src\global.h" open="1" top="0" tabpos="2" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="571" topLine="0" />
-		</Cursor>
-	</File>
-	<File name="src\main.cpp" open="1" top="0" tabpos="1" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="640" topLine="8" />
 		</Cursor>
 	</File>
 	<File name="src\pred\predictor.cpp" open="1" top="0" tabpos="9" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
@@ -77,20 +42,85 @@
 			<Cursor1 position="24" topLine="0" />
 		</Cursor>
 	</File>
+	<File name="src\file\sac.h" open="1" top="0" tabpos="6" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="354" topLine="0" />
+		</Cursor>
+	</File>
+	<File name="src\coder\counter.h" open="1" top="0" tabpos="16" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="6051" topLine="12" />
+		</Cursor>
+	</File>
+	<File name="src\file\sac.cpp" open="1" top="0" tabpos="7" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="401" topLine="16" />
+		</Cursor>
+	</File>
+	<File name="src\codec.h" open="1" top="0" tabpos="12" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="905" topLine="1" />
+		</Cursor>
+	</File>
+	<File name="src\coder\map.h" open="1" top="0" tabpos="24" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="1826" topLine="0" />
+		</Cursor>
+	</File>
+	<File name="src\coder\bufio.h" open="1" top="0" tabpos="17" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="0" topLine="0" />
+		</Cursor>
+	</File>
 	<File name="src\pred\predictor.h" open="1" top="0" tabpos="10" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
 		<Cursor>
-			<Cursor1 position="482" topLine="0" />
+			<Cursor1 position="3139" topLine="0" />
 		</Cursor>
 	</File>
-	<File name="src\utils.h" open="1" top="0" tabpos="3" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+	<File name="src\math\cholesky.cpp" open="1" top="0" tabpos="21" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
 		<Cursor>
-			<Cursor1 position="336" topLine="9" />
+			<Cursor1 position="529" topLine="23" />
 		</Cursor>
 	</File>
-	<File name="src\codec.cpp" open="1" top="0" tabpos="13" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+	<File name="src\math\matrix.h" open="1" top="0" tabpos="22" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
 		<Cursor>
-			<Cursor1 position="1271" topLine="53" />
+			<Cursor1 position="271" topLine="0" />
 		</Cursor>
 	</File>
-	<EditorTabsLayout layout="09863cf055f5ec6f0000177700000002=0;sac:src\main.cpp,1;sac:src\global.h,2;sac:src\utils.h,3;sac:src\file\file.h,4;sac:src\file\wav.h,5;sac:src\file\sac.h,6;sac:src\file\sac.cpp,7;sac:src\file\wav.cpp,8;sac:src\pred\predictor.cpp,9;sac:src\pred\predictor.h,10;sac:src\file\file.cpp,11;sac:src\codec.h,12;sac:src\codec.cpp,13;sac:src\coder\range.h,14;sac:src\coder\range.cpp,15;sac:src\coder\counter.h,16;sac:src\coder\bufio.h,*17;sac:src\coder\vle.h@layout2|name=dummy;caption=;state=2098174;dir=3;layer=0;row=0;pos=0;prop=100000;bestw=734;besth=287;minw=734;minh=287;maxw=-1;maxh=-1;floatx=-1;floaty=-1;floatw=-1;floath=-1|name=09863cf055f5ec6f0000177700000002;caption=;state=2098172;dir=5;layer=0;row=0;pos=0;prop=100000;bestw=200;besth=200;minw=-1;minh=-1;maxw=-1;maxh=-1;floatx=-1;floaty=-1;floatw=-1;floath=-1|dock_size(5,0,0)=202|" />
+	<File name="src\math\cov.h" open="1" top="0" tabpos="23" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="628" topLine="5" />
+		</Cursor>
+	</File>
+	<File name="src\math\cholesky.h" open="1" top="0" tabpos="20" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="243" topLine="0" />
+		</Cursor>
+	</File>
+	<File name="src\coder\vle.h" open="1" top="1" tabpos="18" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="653" topLine="24" />
+		</Cursor>
+	</File>
+	<File name="src\coder\range.cpp" open="1" top="0" tabpos="15" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="674" topLine="18" />
+		</Cursor>
+	</File>
+	<File name="src\file\file.cpp" open="1" top="0" tabpos="11" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="416" topLine="0" />
+		</Cursor>
+	</File>
+	<File name="src\main.cpp" open="1" top="0" tabpos="1" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="1293" topLine="20" />
+		</Cursor>
+	</File>
+	<File name="src\coder\range.h" open="1" top="0" tabpos="14" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="1495" topLine="0" />
+		</Cursor>
+	</File>
+	<EditorTabsLayout layout="09b78fa855f86071000015e900000002=0;sac:src\main.cpp,1;sac:src\global.h,2;sac:src\utils.h,3;sac:src\file\file.h,4;sac:src\file\wav.h,5;sac:src\file\sac.h,6;sac:src\file\sac.cpp,7;sac:src\file\wav.cpp,8;sac:src\pred\predictor.cpp,9;sac:src\pred\predictor.h,10;sac:src\file\file.cpp,11;sac:src\codec.h,12;sac:src\codec.cpp,13;sac:src\coder\range.h,14;sac:src\coder\range.cpp,15;sac:src\coder\counter.h,16;sac:src\coder\bufio.h,*17;sac:src\coder\vle.h,18;sac:src\timer.h,19;sac:src\math\cholesky.h,20;sac:src\math\cholesky.cpp,21;sac:src\math\matrix.h,22;sac:src\math\cov.h,23;sac:src\coder\map.h@layout2|name=dummy;caption=;state=2098174;dir=3;layer=0;row=0;pos=0;prop=100000;bestw=734;besth=287;minw=734;minh=287;maxw=-1;maxh=-1;floatx=-1;floaty=-1;floatw=-1;floath=-1|name=09b78fa855f86071000015e900000002;caption=;state=2098172;dir=5;layer=0;row=0;pos=0;prop=100000;bestw=200;besth=200;minw=-1;minh=-1;maxw=-1;maxh=-1;floatx=-1;floaty=-1;floatw=-1;floath=-1|dock_size(5,0,0)=202|" />
 </CodeBlocks_layout_file>

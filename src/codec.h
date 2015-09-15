@@ -18,12 +18,11 @@ class FrameCoder {
     void Decode();
     void WriteEncoded(AudioFile &fout);
     void ReadEncoded(AudioFile &fin);
-    vector<vector<int32_t>>samples;
-    vector<vector<int32_t>>error;
-    vector<vector<int32_t>>temp;
+    vector<vector<int32_t>>samples,pred,error,temp;
     vector<BufIO>encoded;
   private:
     void PredictMonoFrame(int ch,int numsamples);
+    void PredictStereoFrame(int ch0,int ch1,int numsamples);
     void UnpredictMonoFrame(int ch,int numsamples);
     void EncodeMonoFrame(int ch,int numsamples);
     void DecodeMonoFrame(int ch,int numsamples);

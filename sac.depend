@@ -1,5 +1,5 @@
 # depslib dependency file v1.0
-1442257358 source:c:\code\projects\sac\src\main.cpp
+1442338028 source:c:\code\projects\sac\src\main.cpp
 	"global.h"
 	"codec.h"
 	"utils.h"
@@ -17,7 +17,7 @@
 	<iomanip>
 	<chrono>
 
-1442244792 c:\code\projects\sac\src\utils.h
+1442262859 c:\code\projects\sac\src\utils.h
 	"global.h"
 
 1441725580 source:c:\code\projects\sac\src\wav.cpp
@@ -69,7 +69,7 @@
 1441977473 source:c:\code\projects\sac\src\file\wav.cpp
 	"wav.h"
 
-1442258165 c:\code\projects\sac\src\pred\predictor.h
+1442341123 c:\code\projects\sac\src\pred\predictor.h
 	"../global.h"
 	"../math/cholesky.h"
 	"../math/cov.h"
@@ -92,10 +92,10 @@
 1441816559 c:\code\projects\sac\src\coder\bit.h
 	"../global.h"
 
-1442258696 source:c:\code\projects\sac\src\codec.cpp
+1442342311 source:c:\code\projects\sac\src\codec.cpp
 	"codec.h"
 
-1441986341 c:\code\projects\sac\src\codec.h
+1442341295 c:\code\projects\sac\src\codec.h
 	"file/wav.h"
 	"file/sac.h"
 	"pred/predictor.h"
@@ -115,11 +115,12 @@
 	"range.h"
 	"counter.h"
 
-1442089119 c:\code\projects\sac\src\coder\counter.h
+1442344129 c:\code\projects\sac\src\coder\counter.h
 
-1442230061 c:\code\projects\sac\src\coder\vle.h
+1442345675 c:\code\projects\sac\src\coder\vle.h
 	"range.h"
 	"counter.h"
+	"map.h"
 
 1442228931 c:\code\projects\sac\src\timer.h
 	"global.h"
@@ -138,6 +139,9 @@
 1442249775 c:\code\projects\sac\src\math\corr.h
 	"matrix.h"
 
-1442256106 c:\code\projects\sac\src\math\cov.h
+1442340367 c:\code\projects\sac\src\math\cov.h
 	"matrix.h"
+
+1442344180 c:\code\projects\sac\src\coder\map.h
+	"counter.h"
 
