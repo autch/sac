@@ -90,7 +90,7 @@ int Wav::ReadHeader()
   bool seektodatapos=true;
   uint8_t buf[32];
   vector <uint8_t> vbuf;
-  uint32_t chunkid,chunksize;
+  uint32_t chunkid,chunksize,riffchunksize;
 
   file.read(reinterpret_cast<char*>(buf),12); // read 'RIFF' chunk descriptor
   chunkid=binUtils::get32LH(buf);
@@ -99,6 +99,7 @@ int Wav::ReadHeader()
   // do we have a wave file?
   if (chunkid==0x46464952 && binUtils::get32LH(buf+8)==0x45564157) {
 
+    riffchunksize=chunksize;
     myChunks.Append(chunkid,chunksize,buf+8,4);
 
     while (1) {
@@ -134,8 +135,10 @@ int Wav::ReadHeader()
           file.seekg(pos+chunksize);
         }
       } else { // read remaining chunks
-        ReadData(vbuf,chunksize);
-        myChunks.Append(chunkid,chunksize,&vbuf[0],chunksize);
+        uint32_t readsize=chunksize;
+        if (chunksize&1) readsize++; // chunkdata is word-aligned, although chunksize may be odd
+        ReadData(vbuf,readsize);
+        myChunks.Append(chunkid,chunksize,&vbuf[0],readsize);
       }
       if (file.tellg()==getFileSize()) break;
     }
@@ -144,7 +147,7 @@ int Wav::ReadHeader()
   if (verbose) {
     cout << " Number of chunks: " << myChunks.GetNumChunks() << endl;
     for (size_t i=0;i<myChunks.GetNumChunks();i++)
-      cout << "  Chunk" << setw(2) << (i+1) << ": '" << binUtils::U322Str(myChunks.GetChunkID(i)) << "' " << myChunks.GetChunkDataSize(i) << " Bytes\n";
+      cout << "  Chunk" << setw(2) << (i+1) << ": '" << binUtils::U322Str(myChunks.GetChunkID(i)) << "' " << myChunks.GetChunkSize(i) << " Bytes\n";
     cout << " Metadatasize: " << myChunks.GetMetaDataSize() << " Bytes\n";
   }
   if (seektodatapos) {file.seekg(datapos);seektodatapos=false;};

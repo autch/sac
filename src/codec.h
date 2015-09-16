@@ -24,6 +24,7 @@ class FrameCoder {
     void PredictMonoFrame(int ch,int numsamples);
     void PredictStereoFrame(int ch0,int ch1,int numsamples);
     void UnpredictMonoFrame(int ch,int numsamples);
+    void UnpredictStereoFrame(int ch0,int ch1,int numsamples);
     void EncodeMonoFrame(int ch,int numsamples);
     void DecodeMonoFrame(int ch,int numsamples);
     int numchannels,framesize,numsamples;

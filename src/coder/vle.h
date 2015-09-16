@@ -28,64 +28,50 @@ class BPNCoder {
       if (val<0) val=2*(-val);
       else if (val>0) val=(2*val)-1;
 
-      msb=0;
-      int ctx=1;
-
-      for (int i=maxbpn;i>=0;i--) {
+      int msb=0;
+      for (int i=18;i>=0;i--) {
         int bit=(val>>i)&1;
 
-        int c=i+(msb<<5);
-        int p1=bpn[c].p1;
-        rc.EncodeBitOne(p1,bit);
-        bpn[c].update(bit,0.01*PSCALE);
+        int bctx=i+(msb<<5);
+        int ssectx=i+((msb>0)<<6);
+
+        int p1=bpn[bctx].p1;
+        int p1sse=sse[ssectx].p1(p1);
+
+        rc.EncodeBitOne(p1sse,bit);
+        bpn[bctx].update(bit,250);
+        sse[ssectx].update2(bit,220);
 
         if (msb==0 && bit) msb=i;
-        ctx+=ctx+bit;
      }
     }
+     int Decode()
+     {
+      int val=0;
+      int msb=0;
+      for (int i=18;i>=0;i--) {
+        int bctx=i+(msb<<5);
+        int ssectx=i+((msb>0)<<6);
+
+        int p1=bpn[bctx].p1;
+        int p1sse=sse[ssectx].p1(p1);
+
+        int bit=rc.DecodeBitOne(p1sse);
+        bpn[bctx].update(bit,250);
+        sse[ssectx].update2(bit,220);
+
+        if (msb==0 && bit) msb=i;
+        val+=(bit<<i);
+      }
+      if (val&1) val=((val+1)>>1);
+      else val=-(val>>1);
+      return val;
+     }
   private:
     RangeCoderSH &rc;
     LinearCounter16 bpn[1<<12];
-    int maxbpn,msb;
-};
-
-class BitCoder {
-  public:
-    BitCoder(RangeCoderSH &rc,int maxbpn):rc(rc),maxbpn(maxbpn)
-    {
-    }
-    void Encode(int pred,int val)
-    {
-      int signp=val<0?1:0;
-      int signs=pred<0?1:0;
-      int smatch=(signp==signs)?1:0;
-
-      rc.EncodeBitOne(sgn.p1,smatch);
-      sgn.update(smatch,0.01*PSCALE);
-
-      failedat=0;
-      for (int i=maxbpn;i>=0;i--)
-      {
-        int bitp=(pred>>i)&1;
-        int bits=(val>>i)&1;
-
-        int bmatch=(bitp==bits)?1:0;
-
-        int ctx=(failedat<<6)+(smatch << 5)+i;
-
-        int p1=bpn[ctx].p1;
-        rc.EncodeBitOne(p1,bmatch);
-
-        bpn[ctx].update(bmatch,0.01*PSCALE);
-        if (!bmatch) {failedat=i;}
-      }
-    }
-  private:
-    RangeCoderSH &rc;
-    LinearCounter16 bpn[1<<12],spn[1<<10],sgn;
-    int histb;
+    SSE<4> sse[256];
     int maxbpn;
-    int failedat;
 };
 
 class Golomb {

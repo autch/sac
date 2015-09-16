@@ -25,7 +25,7 @@ int main(int argc,char *argv[])
   if (myChol.Test()) cout << "ok" << endl;
   else cout << "error" << endl;*/
 
-  cout << "Sac v0.0.1 - Lossless Audio Coder (c) Sebastian Lehmann\n";
+  cout << "Sac v0.0.2 - Lossless Audio Coder (c) Sebastian Lehmann\n";
   cout << "compiled on " << __DATE__ << " ";
   #ifdef __x86_64
     cout << "(64-bit)";
@@ -36,6 +36,8 @@ int main(int argc,char *argv[])
   if (argc < 2) {
     cout << "usage: sac [--options] input output\n\n";
     cout << "  --encode         encode input.wav to output.sac (default)\n";
+    cout << "  --fast           fast, sacrifice compression\n";
+    cout << "  --normal         good compression\n";
     cout << "  --decode         decode input.sac to output.wav\n";
     return 1;
   }
