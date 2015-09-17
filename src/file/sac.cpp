@@ -14,7 +14,7 @@ int Sac::WriteHeader(Wav &myWav)
   binUtils::put32LH(buf+6,samplerate);
   binUtils::put16LH(buf+10,bitspersample);
   binUtils::put32LH(buf+12,numsamples);
-  binUtils::put32LH(buf+16,0);
+  binUtils::put32LH(buf+16,profile);
   binUtils::put32LH(buf+20,metadatasize);
   file.write((char*)buf,24);
   if (myChunks.PackMetaData(metadata)!=metadatasize) cerr << "  warning: metadatasize mismatch\n";
@@ -38,6 +38,7 @@ int Sac::ReadHeader()
     samplerate=binUtils::get32LH(buf+6);
     bitspersample=binUtils::get16LH(buf+10);
     numsamples=binUtils::get32LH(buf+12);
+    profile=binUtils::get32LH(buf+16);
     metadatasize=binUtils::get32LH(buf+20);
     ReadData(metadata,metadatasize);
 

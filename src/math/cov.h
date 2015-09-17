@@ -5,6 +5,11 @@
 
 // adaptively calculate auto-covariance-matrix
 
+// WLS is used to solved a weighted least squares problem
+// covariance update R(n)=a*R(n-1)+x*x^T
+// else the update of R is done via exp-smoothing i.e R(n)=a*R(n-1)+(1-a)x*x^T
+#define WLS
+
 class AutoCov {
   public:
     AutoCov(double alpha,int dim):c(dim),hist(dim),b(dim),alpha(alpha)
@@ -14,15 +19,27 @@ class AutoCov {
     void UpdateCov() {
       const int n=hist.size();
       for (int j=0;j<n;j++) {
-        double histj=hist[j];
-        for (int i=0;i<n;i++) c[j][i]=alpha*c[j][i]+(1.0-alpha)*(hist[i]*histj);
+        const double histj=hist[j];
+        double *cj=&(c.mat[j][0]);
+        for (int i=0;i<n;i++) {
+            #ifdef WLS
+              cj[i]=alpha*cj[i]+(hist[i]*histj);
+            #else
+              cj[i]=alpha*cj[i]+(1.0-alpha)*(hist[i]*histj);
+            #endif
+        }
       }
     }
     void UpdateB(double val)
     {
       const int n=hist.size();
-      for (int i=0;i<n;i++) b[i]=alpha*b[i]+(1.0-alpha)*(val*hist[i]);
-
+      for (int i=0;i<n;i++) {
+        #ifdef WLS
+          b[i]=alpha*b[i]+(val*hist[i]);
+        #else
+          b[i]=alpha*b[i]+(1.0-alpha)*(val*hist[i]);
+        #endif
+      }
     }
     void UpdateHist(double val,int n0,int n1) {
       for (int i=n1;i>n0;i--) hist[i]=hist[i-1];

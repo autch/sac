@@ -94,5 +94,4 @@ class O1Pred : public MonoPredictor {
 };
 
 
-
 #endif // PREDICTOR_H

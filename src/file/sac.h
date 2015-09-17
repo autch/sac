@@ -8,18 +8,20 @@
 class Sac : public AudioFile
 {
   public:
-    Sac():AudioFile(),metadatasize(0){};
+    Sac():AudioFile(),metadatasize(0),profile(0){};
     Sac(Wav &file)
     :AudioFile(file),metadatasize(0)
     {
 
     }
+    void SetProfile(int val){profile=val;};
+    int GetProfile(){return profile;};
     int WriteHeader(Wav &myWav);
     int ReadHeader();
     int UnpackMetaData(Wav &myWav);
     vector <uint8_t>metadata;
   private:
-     uint32_t metadatasize;
+     uint32_t metadatasize,profile;
 };
 
 

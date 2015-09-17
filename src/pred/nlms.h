@@ -44,11 +44,14 @@ class NLMS : public MonoPredictor {
     int imin,imax;
 };
 
+// NLMS: updates energy after updating weighting coefs
+//#define POSTUPDATE
+
 class NLMS2 : public StereoPredictor {
   public:
       NLMS2(double mu,int S,int D):w(S+D),hist(S+D),mu(mu),S(S),D(D) {
         pred=0;
-        spow=0.0;
+        err=spow=0.0;
         imin=-(1<<15);imax=(1<<15);
         //imin=imax=0;
       }
@@ -60,22 +63,23 @@ class NLMS2 : public StereoPredictor {
         double sum=0.; // caluclate prediction
         for (int i=0;i<S+D;i++) sum+=w[i]*hist[i];
         pred=floor(sum+0.5);
-
-        //if(pred<imin)pred=imin;
-        //else if (pred>imax)pred=imax;
-
         return pred;
       }
       void Update(int32_t val) {
-        if (val<imin) imin=val;
-        else if (val>imax) imax=val;
+        /*if (val<imin) imin=val;
+        else if (val>imax) imax=val;*/
 
-        double err=val-pred; // calculate prediction error
+        #ifndef POSTUPDATE
+          UpdateEnergy(S-1,val);
+        #endif
+        err=val-pred; // calculate prediction error
 
-        UpdateEnergy(S-1,val);
         const double wf=mu*err/(spow+0.001);
         for (int i=0;i<S+D;i++) w[i]+=wf*hist[i]; // update weight vector
 
+        #ifdef POSTUPDATE
+          UpdateEnergy(S-1,val);
+        #endif
         for (int i=S-1;i>0;i--) hist[i]=hist[i-1];hist[0]=val;
       }
       ~NLMS2(){};
@@ -85,7 +89,7 @@ class NLMS2 : public StereoPredictor {
      spow+=(val*val);
     }
     Vector w,hist;
-    double spow,mu;
+    double spow,mu,err;
     int pred,S,D;
     int imin,imax;
 };

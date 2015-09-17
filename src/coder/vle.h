@@ -25,11 +25,9 @@ class BPNCoder {
     }
     void Encode(int val)
     {
-      if (val<0) val=2*(-val);
-      else if (val>0) val=(2*val)-1;
-
+      val=MathUtils::S2U(val);
       int msb=0;
-      for (int i=18;i>=0;i--) {
+      for (int i=maxbpn;i>=0;i--) {
         int bit=(val>>i)&1;
 
         int bctx=i+(msb<<5);
@@ -49,7 +47,7 @@ class BPNCoder {
      {
       int val=0;
       int msb=0;
-      for (int i=18;i>=0;i--) {
+      for (int i=maxbpn;i>=0;i--) {
         int bctx=i+(msb<<5);
         int ssectx=i+((msb>0)<<6);
 
@@ -63,9 +61,7 @@ class BPNCoder {
         if (msb==0 && bit) msb=i;
         val+=(bit<<i);
       }
-      if (val&1) val=((val+1)>>1);
-      else val=-(val>>1);
-      return val;
+      return MathUtils::U2S(val);
      }
   private:
     RangeCoderSH &rc;

@@ -23,7 +23,7 @@
 				<Option object_output="obj/Release/" />
 				<Option type="1" />
 				<Option compiler="gcc" />
-				<Option parameters="--encode C:\Code\test.wav c:\code\test2.sac" />
+				<Option parameters="--encode C:\Code\wavsamples\ritual.wav c:\code\test.sac" />
 				<Compiler>
 					<Add option="-O2" />
 					<Add option="-std=c++11" />
@@ -57,7 +57,8 @@
 		<Unit filename="src/math/cholesky.h" />
 		<Unit filename="src/math/cov.h" />
 		<Unit filename="src/math/matrix.h" />
-		<Unit filename="src/pred/predictor.cpp" />
+		<Unit filename="src/pred/lpc.h" />
+		<Unit filename="src/pred/nlms.h" />
 		<Unit filename="src/pred/predictor.h" />
 		<Unit filename="src/timer.h" />
 		<Unit filename="src/utils.h" />

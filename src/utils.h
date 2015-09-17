@@ -27,6 +27,18 @@ class MathUtils {
            return sum;
          }
       }
+      static int32_t S2U(int32_t val)
+      {
+        if (val<0) val=2*(-val);
+        else if (val>0) val=(2*val)-1;
+        return val;
+      }
+      static int32_t U2S(int32_t val)
+      {
+        if (val&1) val=((val+1)>>1);
+        else val=-(val>>1);
+        return val;
+      }
 };
 
 class miscUtils {

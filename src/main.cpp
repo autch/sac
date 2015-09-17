@@ -25,7 +25,7 @@ int main(int argc,char *argv[])
   if (myChol.Test()) cout << "ok" << endl;
   else cout << "error" << endl;*/
 
-  cout << "Sac v0.0.2 - Lossless Audio Coder (c) Sebastian Lehmann\n";
+  cout << "Sac v0.0.3 - Lossless Audio Coder (c) Sebastian Lehmann\n";
   cout << "compiled on " << __DATE__ << " ";
   #ifdef __x86_64
     cout << "(64-bit)";
@@ -37,13 +37,15 @@ int main(int argc,char *argv[])
     cout << "usage: sac [--options] input output\n\n";
     cout << "  --encode         encode input.wav to output.sac (default)\n";
     cout << "  --fast           fast, sacrifice compression\n";
-    cout << "  --normal         good compression\n";
+    cout << "  --normal         normal compression (default)\n";
+    cout << "  --high           high compression, slow\n";
     cout << "  --decode         decode input.sac to output.wav\n";
     return 1;
   }
 
   string sinputfile,soutputfile;
   int mode=0;
+  int profile=1;
 
   bool first=true;
   string param,uparam;
@@ -53,6 +55,9 @@ int main(int argc,char *argv[])
     if (param.length()>1 && (param[0]=='-' && param[1]=='-')) {
        if (uparam.compare("--ENCODE")==0) mode=0;
        else if (uparam.compare("--DECODE")==0) mode=1;
+       else if (uparam.compare("--FAST")==0) profile=0;
+       else if (uparam.compare("--NORMAL")==0) profile=1;
+       else if (uparam.compare("--HIGH")==0) profile=2;
        else cout << "warning: unknown option '" << param << "'\n";
     } else {
        if (first) {sinputfile=param;first=false;}
@@ -73,8 +78,12 @@ int main(int argc,char *argv[])
          if (mySac.OpenWrite(soutputfile)==0) {
            cout << "ok\n";
            PrintInfo(myWav);
+           cout << "  Profile: ";
+           if (profile==0) cout << "fast" << endl;
+           else if (profile==1) cout << "normal" << endl;
+           else if (profile==2) cout << "high" << endl;
            Codec myCodec;
-           myCodec.EncodeFile(myWav,mySac);
+           myCodec.EncodeFile(myWav,mySac,profile);
            uint64_t infilesize=myWav.getFileSize();
            uint64_t outfilesize=mySac.readFileSize();
            double r=0.;
@@ -96,6 +105,11 @@ int main(int argc,char *argv[])
            cout << "Create: '" << soutputfile << "': ";
            if (myWav.OpenWrite(soutputfile)==0) {
              cout << "ok\n";
+             cout << "  Profile: ";
+             if (mySac.GetProfile()==0) cout << "fast" << endl;
+             else if (mySac.GetProfile()==1) cout << "normal" << endl;
+             else if (mySac.GetProfile()==1) cout << "high" << endl;
+
              Codec myCodec;
              myCodec.DecodeFile(mySac,myWav);
              myWav.Close();

@@ -1,5 +1,5 @@
 # depslib dependency file v1.0
-1442430413 source:c:\code\projects\sac\src\main.cpp
+1442506619 source:c:\code\projects\sac\src\main.cpp
 	"global.h"
 	"codec.h"
 	"utils.h"
@@ -17,7 +17,7 @@
 	<iomanip>
 	<chrono>
 
-1442262859 c:\code\projects\sac\src\utils.h
+1442500921 c:\code\projects\sac\src\utils.h
 	"global.h"
 
 1441725580 source:c:\code\projects\sac\src\wav.cpp
@@ -58,10 +58,10 @@
 1441973436 source:c:\code\projects\sac\src\file\file.cpp
 	"file.h"
 
-1441976328 source:c:\code\projects\sac\src\file\sac.cpp
+1442502361 source:c:\code\projects\sac\src\file\sac.cpp
 	"sac.h"
 
-1441976320 c:\code\projects\sac\src\file\sac.h
+1442502350 c:\code\projects\sac\src\file\sac.h
 	"file.h"
 	"wav.h"
 	"../utils.h"
@@ -69,7 +69,7 @@
 1442393184 source:c:\code\projects\sac\src\file\wav.cpp
 	"wav.h"
 
-1442429464 c:\code\projects\sac\src\pred\predictor.h
+1442505084 c:\code\projects\sac\src\pred\predictor.h
 	"../global.h"
 
 1441731086 source:c:\code\projects\sac\src\pred\predictor.cpp
@@ -90,12 +90,12 @@
 1441816559 c:\code\projects\sac\src\coder\bit.h
 	"../global.h"
 
-1442433252 source:c:\code\projects\sac\src\codec.cpp
+1442507027 source:c:\code\projects\sac\src\codec.cpp
 	"codec.h"
 	"pred/lpc.h"
 	"pred/nlms.h"
 
-1442413789 c:\code\projects\sac\src\codec.h
+1442502466 c:\code\projects\sac\src\codec.h
 	"file/wav.h"
 	"file/sac.h"
 	"pred/predictor.h"
@@ -117,7 +117,7 @@
 
 1442344129 c:\code\projects\sac\src\coder\counter.h
 
-1442433424 c:\code\projects\sac\src\coder\vle.h
+1442501912 c:\code\projects\sac\src\coder\vle.h
 	"range.h"
 	"counter.h"
 	"map.h"
@@ -139,7 +139,7 @@
 1442249775 c:\code\projects\sac\src\math\corr.h
 	"matrix.h"
 
-1442340367 c:\code\projects\sac\src\math\cov.h
+1442498358 c:\code\projects\sac\src\math\cov.h
 	"matrix.h"
 
 1442388759 c:\code\projects\sac\src\coder\map.h
@@ -149,5 +149,5 @@
 	"../math/cholesky.h"
 	"../math/cov.h"
 
-1442433329 c:\code\projects\sac\src\pred\nlms.h
+1442506497 c:\code\projects\sac\src\pred\nlms.h
 

@@ -7,6 +7,7 @@ void FrameCoder::Init(int numch,int framesz)
   numchannels=numch;
   framesize=framesz;
 
+  framestats.resize(numchannels);
   samples.resize(numchannels);
   pred.resize(numchannels);
   error.resize(numchannels);
@@ -66,7 +67,6 @@ void FrameCoder::UnpredictMonoFrame(int ch,int numsamples)
   }
 }
 
-
 class StereoProfile : public StereoProcess {
   public:
     StereoProfile(int profile=0)
@@ -83,6 +83,13 @@ class StereoProfile : public StereoProcess {
         p[0]=new StereoFromMono(new O1Pred(28,5),new O1Pred(28,5));
         p[1]=new StereoFromStereo(new LPC2(0.998,16,4,32),new LPC2(0.998,16,4,32));
         p[2]=new StereoFromStereo(new NLMS2(0.05,256,32),new NLMS2(0.05,256,32));
+      } else if (profile==2) {
+        pn=4;
+        p.resize(pn);
+        p[0]=new StereoFromMono(new O1Pred(28,5),new O1Pred(28,5));
+        p[1]=new StereoFromStereo(new LPC2(0.998,16,4,32),new LPC2(0.998,16,4,32));
+        p[2]=new StereoFromStereo(new NLMS2(0.02,1024,256),new NLMS2(0.02,1024,256));
+        p[3]=new StereoFromStereo(new NLMS2(0.05,256,32),new NLMS2(0.05,256,32));
       }
     }
     ~StereoProfile() {
@@ -113,24 +120,32 @@ class StereoProfile : public StereoProcess {
     int pn;
 };
 
-void FrameCoder::PredictStereoFrame(int ch0,int ch1,int numsamples)
+void FrameCoder::PredictStereoFrame(int profile,int ch0,int ch1,int numsamples)
 {
-  StereoProfile myProfile(1);
+  StereoProfile myProfile(profile);
 
   const int32_t *src0=&(samples[ch0][0]);
   const int32_t *src1=&(samples[ch1][0]);
   int32_t *dst0=&(error[ch0][0]);
   int32_t *dst1=&(error[ch1][0]);
 
+  int32_t emax0=0,emax1=0;
   for (int i=0;i<numsamples;i++) {
     myProfile.Predict(src0[i],src1[i],dst0[i],dst1[i]);
     myProfile.Update();
+
+    int32_t err0=MathUtils::S2U(dst0[i]);
+    int32_t err1=MathUtils::S2U(dst1[i]);
+    if (err0>emax0) emax0=err0;
+    if (err1>emax1) emax1=err1;
   }
+  framestats[0].maxbpn=MathUtils::iLog2(emax0);
+  framestats[1].maxbpn=MathUtils::iLog2(emax1);
 }
 
-void FrameCoder::UnpredictStereoFrame(int ch0,int ch1,int numsamples)
+void FrameCoder::UnpredictStereoFrame(int profile,int ch0,int ch1,int numsamples)
 {
-  StereoProfile myProfile(1);
+  StereoProfile myProfile(profile);
 
   const int32_t *src0=&(error[ch0][0]);
   const int32_t *src1=&(error[ch1][0]);
@@ -151,23 +166,10 @@ void FrameCoder::EncodeMonoFrame(int ch,int numsamples)
   BufIO &buf=encoded[ch];
   buf.Reset();
 
-  int maxbpn=0;
-  int maxs=0;
-  for (int i=0;i<numsamples;i++) {
-    int val=src[i];
-    if (val<0) val=2*(-val);
-    else if (val>0) val=(2*val)-1;
-    if (val>maxs) maxs=val;
-  }
-  maxbpn=MathUtils::iLog2(maxs);
-
   RangeCoderSH rc(buf);
   rc.Init();
 
-  //Golomb vle(rc);
-  //for (int i=0;i<numsamples;i++) vle.Encode(src[i]);
-
-  BPNCoder bc(rc,maxbpn);
+  BPNCoder bc(rc,framestats[ch].maxbpn);
   for (int i=0;i<numsamples;i++) bc.Encode(src[i]);
   rc.Stop();
 }
@@ -183,21 +185,21 @@ void FrameCoder::DecodeMonoFrame(int ch,int numsamples)
 
   //Golomb vle(rc);
 
-  BPNCoder bc(rc,0);
+  BPNCoder bc(rc,framestats[ch].maxbpn);
   for (int i=0;i<numsamples;i++) dst[i]=bc.Decode();
   //for (int i=0;i<numsamples;i++) dst[i]=vle.Decode();
   rc.Stop();
 }
 
-void FrameCoder::Predict()
+void FrameCoder::Predict(int profile)
 {
-  if (numchannels==2) PredictStereoFrame(0,1,numsamples);
+  if (numchannels==2) PredictStereoFrame(profile,0,1,numsamples);
   else for (int ch=0;ch<numchannels;ch++) PredictMonoFrame(ch,numsamples);
 }
 
-void FrameCoder::Unpredict()
+void FrameCoder::Unpredict(int profile)
 {
-  if (numchannels==2) UnpredictStereoFrame(0,1,numsamples);
+  if (numchannels==2) UnpredictStereoFrame(profile,0,1,numsamples);
   else for (int ch=0;ch<numchannels;ch++) UnpredictMonoFrame(ch,numsamples);
 }
 
@@ -214,7 +216,7 @@ void FrameCoder::Decode()
 
 void FrameCoder::WriteEncoded(AudioFile &fout)
 {
-  uint8_t buf[4];
+  uint8_t buf[8];
   binUtils::put32LH(buf,numsamples);
   fout.file.write(reinterpret_cast<char*>(buf),4);
   //cout << "numsamples: " << numsamples << endl;
@@ -222,23 +224,25 @@ void FrameCoder::WriteEncoded(AudioFile &fout)
   for (int ch=0;ch<numchannels;ch++) {
     uint32_t blocksize=encoded[ch].GetBufPos();
     binUtils::put32LH(buf,blocksize);
+    binUtils::put32LH(buf+4,framestats[ch].maxbpn);
+
     //cout << " blocksize: " << blocksize << endl;
-    fout.file.write(reinterpret_cast<char*>(buf),4);
+    fout.file.write(reinterpret_cast<char*>(buf),8);
     fout.WriteData(encoded[ch].GetBuf(),blocksize);
   }
 }
 
 void FrameCoder::ReadEncoded(AudioFile &fin)
 {
-  uint8_t buf[4];
+  uint8_t buf[8];
   fin.file.read(reinterpret_cast<char*>(buf),4);
   numsamples=binUtils::get32LH(buf);
   //cout << "numsamples: " << numsamples << endl;
   //cout << " filepos:   " << fin.file.tellg() << endl;
   for (int ch=0;ch<numchannels;ch++) {
-    fin.file.read(reinterpret_cast<char*>(buf),4);
+    fin.file.read(reinterpret_cast<char*>(buf),8);
     uint32_t blocksize=binUtils::get32LH(buf);
-    //cout << " blocksize: " << blocksize << endl;
+    framestats[ch].maxbpn=binUtils::get32LH(buf+4);
     fin.ReadData(encoded[ch].GetBuf(),blocksize);
   }
 }
@@ -249,13 +253,14 @@ void Codec::PrintProgress(int samplesprocessed,int totalsamples)
   cout << "  " << samplesprocessed << "/" << totalsamples << ":" << setw(6) << miscUtils::ConvertFixed(r,1) << "%\r";
 }
 
-void Codec::EncodeFile(Wav &myWav,Sac &mySac)
+void Codec::EncodeFile(Wav &myWav,Sac &mySac,int profile)
 {
   const int numchannels=myWav.getNumChannels();
   framesize=4*myWav.getSampleRate();
 
   myFrame.Init(numchannels,framesize);
 
+  mySac.SetProfile(profile);
   mySac.WriteHeader(myWav);
   myWav.InitFileBuf(framesize);
 
@@ -265,7 +270,7 @@ void Codec::EncodeFile(Wav &myWav,Sac &mySac)
     int samplesread=myWav.ReadSamples(myFrame.samples,framesize);
 
     myFrame.SetNumSamples(samplesread);
-    myFrame.Predict();
+    myFrame.Predict(profile);
     myFrame.Encode();
     myFrame.WriteEncoded(mySac);
 
@@ -289,10 +294,11 @@ void Codec::DecodeFile(Sac &mySac,Wav &myWav)
   myWav.InitFileBuf(framesize);
   mySac.UnpackMetaData(myWav);
   myWav.WriteHeader();
+  int profile=mySac.GetProfile();
   while (samplestodecode>0) {
     myFrame.ReadEncoded(mySac);
     myFrame.Decode();
-    myFrame.Unpredict();
+    myFrame.Unpredict(profile);
     myWav.WriteSamples(myFrame.samples,myFrame.GetNumSamples());
 
     samplesdecoded+=myFrame.GetNumSamples();
@@ -302,5 +308,3 @@ void Codec::DecodeFile(Sac &mySac,Wav &myWav)
   myWav.WriteHeader();
   cout << endl;
 }
-
-
