@@ -3,6 +3,32 @@
 
 #include "global.h"
 
+// running exponential smoothing
+// sum=alpha*sum+(1.0-alpha)*val, where 1/(1-alpha) is the mean number of samples considered
+class RunExp {
+  public:
+      RunExp(double alpha):alpha(alpha){sum=0;};
+      RunExp(double alpha,double sum):alpha(alpha),sum(sum){};
+      inline double Get(){return sum;};
+      inline void Update(double val) {
+        sum=alpha*sum+(1.-alpha)*val;
+      }
+  private:
+    double alpha,sum;
+};
+
+// running weighted sum: sum_{i=0}^n alpha^(n-i) val
+class RunWeight {
+  public:
+      RunWeight(double alpha):alpha(alpha){sum=0;};
+      inline double Get(){return sum;};
+      inline void Update(double val) {
+        sum=alpha*sum+val;
+      }
+  private:
+    double alpha,sum;
+};
+
 class strUtils {
   public:
       static void strUpper(string &str)
@@ -38,6 +64,24 @@ class MathUtils {
         if (val&1) val=((val+1)>>1);
         else val=-(val>>1);
         return val;
+      }
+      static double L2Dist(const vector<double> &vec1,const vector<double> &vec2)
+      {
+         if (vec1.size()!=vec2.size()) return -1;
+         else {
+           double sum=0.;
+           for (size_t i=0;i<vec1.size();i++) {double t=vec1[i]-vec2[i];sum+=t*t;};
+           return sqrt(sum);
+         }
+      }
+      static double L2Dist2(const vector<double> &vec1,const vector<double> &vec2)
+      {
+         if (vec1.size()!=vec2.size()) return -1;
+         else {
+           double sum=0.;
+           for (size_t i=0;i<vec1.size();i++) {double t=vec1[i]-vec2[i];sum+=t*t;};
+           return sum;
+         }
       }
 };
 

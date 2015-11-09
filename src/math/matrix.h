@@ -13,6 +13,14 @@ class Matrix
     }
     Vector& operator[] (size_t i) { return mat[i]; } // index operator
 
+    void Print() {
+      int n=mat.size();
+      for (int i=0;i<n;i++) {
+        for (int j=0;j<n;j++) cout << mat[j][i] << " ";
+        cout << endl;
+      }
+    }
+
     // gets auto generated
 
     /*Matrix(const Matrix &m) // copy constructor
