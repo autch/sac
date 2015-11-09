@@ -8,12 +8,25 @@
 // calculate the cholesky decomposition of a symmetric pos. def. matrix
 class Cholesky {
   public:
-    Cholesky(){};
+    Cholesky(int n)
+    :n(n)
+    {
+      sol.resize(n);
+      for (int i=0;i<n;i++) sol[i].resize(i+1);
+      y.resize(n);
+      regp=0.;
+    };
     bool Test();
     int Factor(const Matrix &src);
     void Solve(const Vector &b,Vector &x);
+    void Solve(const Vector &b);
     Matrix m;
+    vector <Vector>sol;
+    double regp;
   protected:
+    void CalcY(const Vector &b);
     Vector y;
+    double scale;
+    int n;
 };
 #endif // CHOLESKY_H

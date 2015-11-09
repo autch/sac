@@ -1,15 +1,16 @@
 # depslib dependency file v1.0
-1442506619 source:c:\code\projects\sac\src\main.cpp
+1446879578 source:c:\code\projects\sac\src\main.cpp
 	"global.h"
 	"codec.h"
 	"utils.h"
-	"timer.h"
+	"common/timer.h"
 	"file/wav.h"
 	"file/sac.h"
 	"math/cholesky.h"
 	"math/cov.h"
+	"pred/rbf.h"
 
-1442244777 c:\code\projects\sac\src\global.h
+1443624024 c:\code\projects\sac\src\global.h
 	<iostream>
 	<algorithm>
 	<fstream>
@@ -17,7 +18,7 @@
 	<iomanip>
 	<chrono>
 
-1442500921 c:\code\projects\sac\src\utils.h
+1445285938 c:\code\projects\sac\src\utils.h
 	"global.h"
 
 1441725580 source:c:\code\projects\sac\src\wav.cpp
@@ -48,28 +49,28 @@
 	"file/sac.h"
 	"pred/predictor.h"
 
-1441977148 c:\code\projects\sac\src\file\wav.h
+1441973548 c:\code\projects\sac\src\file\wav.h
 	"file.h"
 	"../utils.h"
 
-1441900342 c:\code\projects\sac\src\file\file.h
+1441896742 c:\code\projects\sac\src\file\file.h
 	"../global.h"
 
-1441973436 source:c:\code\projects\sac\src\file\file.cpp
+1441969836 source:c:\code\projects\sac\src\file\file.cpp
 	"file.h"
 
-1442502361 source:c:\code\projects\sac\src\file\sac.cpp
+1442498761 source:c:\code\projects\sac\src\file\sac.cpp
 	"sac.h"
 
-1442502350 c:\code\projects\sac\src\file\sac.h
+1442498750 c:\code\projects\sac\src\file\sac.h
 	"file.h"
 	"wav.h"
 	"../utils.h"
 
-1442393184 source:c:\code\projects\sac\src\file\wav.cpp
+1443339097 source:c:\code\projects\sac\src\file\wav.cpp
 	"wav.h"
 
-1442505084 c:\code\projects\sac\src\pred\predictor.h
+1447006526 c:\code\projects\sac\src\pred\predictor.h
 	"../global.h"
 
 1441731086 source:c:\code\projects\sac\src\pred\predictor.cpp
@@ -90,64 +91,103 @@
 1441816559 c:\code\projects\sac\src\coder\bit.h
 	"../global.h"
 
-1442507027 source:c:\code\projects\sac\src\codec.cpp
+1447091033 source:c:\code\projects\sac\src\codec.cpp
 	"codec.h"
 	"pred/lpc.h"
 	"pred/nlms.h"
+	"pred/bias.h"
+	"pred/rbf.h"
 
-1442502466 c:\code\projects\sac\src\codec.h
+1447085948 c:\code\projects\sac\src\codec.h
 	"file/wav.h"
 	"file/sac.h"
 	"pred/predictor.h"
 	"coder/range.h"
 	"coder/vle.h"
 
-1442092140 c:\code\projects\sac\src\coder\range.h
+1443339360 c:\code\projects\sac\src\coder\range.h
 	"bufio.h"
+	"../model/model.h"
 
-1441882052 c:\code\projects\sac\src\coder\bufio.h
+1441878452 c:\code\projects\sac\src\coder\bufio.h
 	"../global.h"
 
-1442088091 source:c:\code\projects\sac\src\coder\range.cpp
+1442084491 source:c:\code\projects\sac\src\coder\range.cpp
 	"range.h"
 
 1441898746 c:\code\projects\sac\src\coder\rice.h
 	"range.h"
 	"counter.h"
 
-1442344129 c:\code\projects\sac\src\coder\counter.h
+1442839315 c:\code\projects\sac\src\coder\counter.h
 
-1442501912 c:\code\projects\sac\src\coder\vle.h
+1447085836 c:\code\projects\sac\src\coder\vle.h
 	"range.h"
-	"counter.h"
-	"map.h"
+	"../model/counter.h"
+	"../model/map.h"
+	"../model/mixer.h"
 
 1442228931 c:\code\projects\sac\src\timer.h
 	"global.h"
 
-1442257997 c:\code\projects\sac\src\math\cholesky.h
+1446829057 c:\code\projects\sac\src\math\cholesky.h
 	"../global.h"
 	"../utils.h"
 	"matrix.h"
 
-1442258031 source:c:\code\projects\sac\src\math\cholesky.cpp
+1446830512 source:c:\code\projects\sac\src\math\cholesky.cpp
 	"cholesky.h"
 
-1442244947 c:\code\projects\sac\src\math\matrix.h
+1443886053 c:\code\projects\sac\src\math\matrix.h
 	"../global.h"
 
 1442249775 c:\code\projects\sac\src\math\corr.h
 	"matrix.h"
 
-1442498358 c:\code\projects\sac\src\math\cov.h
+1446830845 c:\code\projects\sac\src\math\cov.h
 	"matrix.h"
 
-1442388759 c:\code\projects\sac\src\coder\map.h
+1443342499 c:\code\projects\sac\src\coder\map.h
 	"counter.h"
 
-1442422842 c:\code\projects\sac\src\pred\lpc.h
+1447045397 c:\code\projects\sac\src\pred\lpc.h
 	"../math/cholesky.h"
 	"../math/cov.h"
+	"blend.h"
 
-1442506497 c:\code\projects\sac\src\pred\nlms.h
+1447088121 c:\code\projects\sac\src\pred\nlms.h
+	"../common/histbuf.h"
+	"blend.h"
+	"lpc.h"
+
+1443169102 c:\code\projects\sac\src\common\histbuf.h
+	"../global.h"
+
+1443169185 c:\code\projects\sac\src\common\timer.h
+	"../global.h"
+
+1445981423 c:\code\projects\sac\src\model\counter.h
+	"model.h"
+
+1446816140 c:\code\projects\sac\src\model\map.h
+	"counter.h"
+	"domain.h"
+
+1445887653 c:\code\projects\sac\src\model\mixer.h
+	"model.h"
+	"domain.h"
+
+1443770678 c:\code\projects\sac\src\model\model.h
+
+1446827813 c:\code\projects\sac\src\pred\blend.h
+	"lpc.h"
+
+1445149888 c:\code\projects\sac\src\pred\bias.h
+	"../global.h"
+
+1445367919 c:\code\projects\sac\src\pred\rbf.h
+	"lpc.h"
+
+1445590526 c:\code\projects\sac\src\model\domain.h
+	"..\global.h"
 

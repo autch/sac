@@ -2,72 +2,179 @@
 #define VLE_H
 
 #include "range.h"
-#include "counter.h"
-#include "map.h"
+#include "../model/counter.h"
+#include "../model/map.h"
+#include "../model/mixer.h"
 
-class ExpSmoother
-{
+#define h1y(v,k) (((v)>>k)^(v))
+#define h2y(v,k) (((v)*2654435761UL)>>(k))
+
+class BitplaneCoder {
+  const int cntref_upd_rate=400;
+  const int cntsig_upd_rate=300;
+  const int mix_upd_rate=800;
+  const int cntsse_upd_rate=1000;
+  const int mixsse_upd_rate=400;
   public:
-      ExpSmoother(double alpha):alpha(alpha){sum=0;};
-      ExpSmoother(double alpha,double sum):alpha(alpha),sum(sum){};
-      double Get(){return sum;};
-      void Update(double val) {
-        sum=alpha*sum+(1-alpha)*val;
-      }
-  private:
-    double alpha,sum;
-};
-
-class BPNCoder {
-  public:
-    BPNCoder(RangeCoderSH &rc,int maxbpn):rc(rc),maxbpn(maxbpn)
+    BitplaneCoder(RangeCoderSH &rc,int maxbpn,int numsamples)
+    :rc(rc),lmixref(32,NMixLogistic(3)),lmixsig(32,NMixLogistic(2)),
+    finalmix(2),
+    msb(numsamples),maxbpn(maxbpn),numsamples(numsamples)
     {
+      bctx=state=0;
+      bpn=0;
     }
-    void Encode(int val)
+    void GetSigState(int i) { // get actual significance state
+      sigst[0]=msb[i];
+      sigst[1]=i>0?msb[i-1]:0;
+      sigst[2]=i<numsamples-1?msb[i+1]:0;
+      sigst[3]=i>1?msb[i-2]:0;
+      sigst[4]=i<numsamples-2?msb[i+2]:0;
+      sigst[5]=i>2?msb[i-3]:0;
+      sigst[6]=i<numsamples-3?msb[i+3]:0;
+      sigst[7]=i>3?msb[i-4]:0;
+      sigst[8]=i<numsamples-4?msb[i+4]:0;
+    }
+    int PredictRef()
     {
-      val=MathUtils::S2U(val);
-      int msb=0;
-      for (int i=maxbpn;i>=0;i--) {
-        int bit=(val>>i)&1;
+      int mixctx=(state&7);
 
-        int bctx=i+(msb<<5);
-        int ssectx=i+((msb>0)<<6);
+      int val=pabuf[sample];
 
-        int p1=bpn[bctx].p1;
-        int p1sse=sse[ssectx].p1(p1);
+      int lval=sample>0?pabuf[sample-1]:0;
+      int lval2=sample>1?pabuf[sample-2]:0;
+      int nval=sample<(numsamples-1)?pabuf[sample+1]:0;
 
-        rc.EncodeBitOne(p1sse,bit);
-        bpn[bctx].update(bit,250);
-        sse[ssectx].update2(bit,220);
+      /*int ctx1=((val>>(bpn+1))&15);
+      int ctx2=(lval>>bpn)&15;
+      int ctx3=(nval>>(bpn+1))&15;*/
 
-        if (msb==0 && bit) msb=i;
-     }
+      int lctx=0;
+      if ((lval>>bpn)>((val>>(bpn+1))<<1)) lctx+=(1<<0);
+      if (nval>>(bpn+1)>(val>>(bpn+1))) lctx+=(1<<1);
+      if ((lval2>>bpn)>((val>>(bpn+1))<<1)) lctx+=(1<<2);
+
+      pc1=&bpn1[0];
+      pc2=&bpn1[1+msb[sample]];
+      pc3=&bpn1[1+32+lctx];
+      plmix=&lmixref[mixctx];
+
+      vector <int>vp={pc1->p1,pc2->p1,pc3->p1};
+      int px=plmix->Predict(vp);
+      return px;
     }
-     int Decode()
-     {
-      int val=0;
-      int msb=0;
-      for (int i=maxbpn;i>=0;i--) {
-        int bctx=i+(msb<<5);
-        int ssectx=i+((msb>0)<<6);
+    void UpdateRef(int bit) {
+      pc1->update(bit,cntref_upd_rate);
+      pc2->update(bit,cntref_upd_rate);
+      pc3->update(bit,cntref_upd_rate);
+      //pc4->update(bit,cntref_upd_rate);
+      plmix->Update(bit,mix_upd_rate);
+      state=(state<<1)+0;
+    }
+    int PredictSig() {
+      int mixctx=(state&7);
+      int ctx1=0;
+      if (sigst[1]) ctx1+=(1<<0);
+      if (sigst[2]) ctx1+=(1<<1);
+      if (sigst[3]) ctx1+=(1<<2);
+      if (sigst[4]) ctx1+=(1<<3);
+      if (sigst[5]) ctx1+=(1<<4);
+      if (sigst[6]) ctx1+=(1<<5);
+      if (sigst[7]) ctx1+=(1<<6);
+      if (sigst[8]) ctx1+=(1<<7);
 
-        int p1=bpn[bctx].p1;
-        int p1sse=sse[ssectx].p1(p1);
+      pc1=&bpn2[0];
+      pc2=&bpn2[1+ctx1];
 
-        int bit=rc.DecodeBitOne(p1sse);
-        bpn[bctx].update(bit,250);
-        sse[ssectx].update2(bit,220);
-
-        if (msb==0 && bit) msb=i;
-        val+=(bit<<i);
+      plmix=&lmixsig[mixctx];
+      vector <int>vp={pc1->p1,pc2->p1};
+      return plmix->Predict(vp);
+    }
+    void UpdateSig(int bit) {
+      pc1->update(bit,cntsig_upd_rate);
+      pc2->update(bit,cntsig_upd_rate);
+      plmix->Update(bit,mix_upd_rate);
+      state=(state<<1)+1;
+      sighist=(sighist<<1)+bit;
+    }
+    int PredictSSE(int p1) {
+      int ssectx=(bpn<<1)+((sigst[0]>0));
+      psse=&sse[ssectx];
+      vector <int>vp={psse->Predict(p1),p1};
+      return finalmix.Predict(vp);
+    }
+    void UpdateSSE(int bit) {
+      psse->Update(bit,cntsse_upd_rate);
+      finalmix.Update(bit,mixsse_upd_rate);
+    }
+    void Encode(int32_t *abuf)
+    {
+      pabuf=abuf;
+      for (bpn=maxbpn;bpn>=0;bpn--)
+      {
+        bctx=1;
+        state=0;
+        sighist=1;
+        for (sample=0;sample<numsamples;sample++) {
+          GetSigState(sample);
+          int bit=(pabuf[sample]>>bpn)&1;
+          if (sigst[0]) { // coef is significant, refine
+            rc.EncodeBitOne(PredictSSE(PredictRef()),bit);
+            UpdateRef(bit);
+            UpdateSSE(bit);
+          } else { // coef is insignificant
+            rc.EncodeBitOne(PredictSSE(PredictSig()),bit);
+            UpdateSig(bit);
+            UpdateSSE(bit);
+            if (bit) msb[sample]=bpn;
+          }
+          bctx=((bctx<<1)+bit)&15;
+        }
       }
-      return MathUtils::U2S(val);
-     }
+    }
+    void Decode(int32_t *buf)
+    {
+      int bit;
+      pabuf=buf;
+      for (int i=0;i<numsamples;i++) buf[i]=0;
+      for (bpn=maxbpn;bpn>=0;bpn--)
+      {
+        bctx=1;
+        state=0;
+        for (sample=0;sample<numsamples;sample++) {
+          GetSigState(sample);
+          if (sigst[0]) { // coef is significant, refine
+            bit=rc.DecodeBitOne(PredictSSE(PredictRef()));
+            UpdateRef(bit);
+            UpdateSSE(bit);
+            if (bit) buf[sample]+=(1<<bpn);
+          } else { // coef is insignificant
+            bit=rc.DecodeBitOne(PredictSSE(PredictSig()));
+            UpdateSig(bit);
+            UpdateSSE(bit);
+            if (bit) {
+              buf[sample]+=(1<<bpn);
+              msb[sample]=bpn;
+            }
+          }
+        }
+      }
+      for (int i=0;i<numsamples;i++) buf[i]=MathUtils::U2S(buf[i]);
+    }
   private:
     RangeCoderSH &rc;
-    LinearCounter16 bpn[1<<12];
-    SSE<4> sse[256];
-    int maxbpn;
+    LinearCounter16 bpn1[1<<10],bpn2[1<<10];
+    vector <NMixLogistic>lmixref,lmixsig;
+    NMixLogistic finalmix;
+    SSENL<32> sse[64];
+    SSENL<32> *psse;
+    LinearCounter16 *pc1,*pc2,*pc3,*pc4,*pc5;
+    NMixLogistic *plmix;
+    int *pabuf,sample;
+    vector <int>msb;
+    int sigst[9];
+    int maxbpn,bpn,numsamples;
+    uint32_t bctx,state,sighist;
 };
 
 class Golomb {
@@ -86,8 +193,17 @@ class Golomb {
       int q=val/m;
       int r=val-q*m;
 
-      for (int i=0;i<q;i++) rc.EncodeBitOne(PSCALEh,1); // encode exponent unary
-      rc.EncodeBitOne(PSCALEh,0);
+      //for (int i=0;i<q;i++) rc.EncodeBitOne(PSCALEh,1); // encode exponent unary
+      //rc.EncodeBitOne(PSCALEh,0);
+
+      int ctx=1;
+      for (int i=7;i>=0;i--) {
+        int bit=(q>>i)&1;
+        rc.EncodeBitOne(cnt[ctx].p1,bit);
+        cnt[ctx].update(bit,250);
+
+        ctx+=ctx+bit;
+      }
 
       /*int ctx=0;
       for (int i=0;i<q;i++) {
@@ -141,10 +257,10 @@ class Golomb {
       }
       return val;
     }
-    ExpSmoother msum;
+    RunExp msum;
   private:
     RangeCoderSH &rc;
-    LinearCounter16 cnt[256];
+    LinearCounter16 cnt[512];
     int lastl;
 };
 
@@ -188,7 +304,7 @@ class GolombRC {
       }
       return val;
     }
-    ExpSmoother msum;
+    RunExp msum;
   private:
     RangeCoder &rc;
 };

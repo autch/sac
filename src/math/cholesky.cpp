@@ -16,10 +16,10 @@ bool Cholesky::Test()
 int Cholesky::Factor(const Matrix &msrc)
 {
   int i,j,k;
-  int n=msrc.GetDim();
-  double sum;
   m=msrc; // copy the matrix
+  for (int i=0;i<n;i++) m[i][i]+=regp;
 
+  double sum;
   for (i=0;i<n;i++) {
     for (j=0;j<i;j++) {
       sum=m[i][j];
@@ -34,10 +34,8 @@ int Cholesky::Factor(const Matrix &msrc)
   return 0;
 }
 
-void Cholesky::Solve(const Vector &b,Vector &x)
+void Cholesky::CalcY(const Vector &b)
 {
-  const int n=m.GetDim();
-  if ((int)y.size()<n) y.resize(n);
   int i,j;
   double sum;
   for (i=0;i<n;i++) {
@@ -45,9 +43,35 @@ void Cholesky::Solve(const Vector &b,Vector &x)
      for (j=0;j<i;j++) sum-=(m[i][j]*y[j]);
      y[i]=sum/m[i][i];
   }
+}
+
+void Cholesky::Solve(const Vector &b,Vector &x)
+{
+  //Vector bx=b;
+  //for (int i=0;i<b.size();i++) bx[i]=bx[i]+regp/double(n);
+  CalcY(b);
+  int i,j;
+  double sum;
   for (i=n-1;i>=0;i--) {
     sum=y[i];
     for (j=i+1;j<n;j++) sum-=(m[j][i]*x[j]);
     x[i]=sum/m[i][i];
+  }
+}
+
+// solve for all orders
+void Cholesky::Solve(const Vector &b)
+{
+  CalcY(b);
+
+  int i,j;
+  double sum;
+  for (int o=0;o<n;o++)
+  {
+    for (i=o;i>=0;i--) {
+      sum=y[i];
+      for (j=i+1;j<=o;j++) sum-=(m[j][i]*sol[o][j]);
+      sol[o][i]=sum/m[i][i];
+    }
   }
 }

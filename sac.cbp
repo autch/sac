@@ -11,7 +11,7 @@
 				<Option object_output="obj/Debug/" />
 				<Option type="1" />
 				<Option compiler="gcc" />
-				<Option parameters="--encode C:\Code\test.wav c:\code\test3.sac" />
+				<Option parameters="--encode C:\Code\death2.wav c:\code\test3.sac" />
 				<Compiler>
 					<Add option="-Wall" />
 					<Add option="-std=c++11" />
@@ -23,7 +23,7 @@
 				<Option object_output="obj/Release/" />
 				<Option type="1" />
 				<Option compiler="gcc" />
-				<Option parameters="--encode C:\Code\wavsamples\ritual.wav c:\code\test.sac" />
+				<Option parameters="--encode C:\Code\test.wav c:\code\test.sac" />
 				<Compiler>
 					<Add option="-O2" />
 					<Add option="-std=c++11" />
@@ -40,11 +40,12 @@
 		<Unit filename="src/codec.cpp" />
 		<Unit filename="src/codec.h" />
 		<Unit filename="src/coder/bufio.h" />
-		<Unit filename="src/coder/counter.h" />
-		<Unit filename="src/coder/map.h" />
 		<Unit filename="src/coder/range.cpp" />
 		<Unit filename="src/coder/range.h" />
 		<Unit filename="src/coder/vle.h" />
+		<Unit filename="src/common/histbuf.h" />
+		<Unit filename="src/common/rand.h" />
+		<Unit filename="src/common/timer.h" />
 		<Unit filename="src/file/file.cpp" />
 		<Unit filename="src/file/file.h" />
 		<Unit filename="src/file/sac.cpp" />
@@ -57,10 +58,17 @@
 		<Unit filename="src/math/cholesky.h" />
 		<Unit filename="src/math/cov.h" />
 		<Unit filename="src/math/matrix.h" />
+		<Unit filename="src/model/counter.h" />
+		<Unit filename="src/model/domain.h" />
+		<Unit filename="src/model/map.h" />
+		<Unit filename="src/model/mixer.h" />
+		<Unit filename="src/model/model.h" />
+		<Unit filename="src/pred/bias.h" />
+		<Unit filename="src/pred/blend.h" />
 		<Unit filename="src/pred/lpc.h" />
 		<Unit filename="src/pred/nlms.h" />
 		<Unit filename="src/pred/predictor.h" />
-		<Unit filename="src/timer.h" />
+		<Unit filename="src/pred/rbf.h" />
 		<Unit filename="src/utils.h" />
 		<Extensions>
 			<code_completion />

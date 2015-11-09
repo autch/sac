@@ -90,7 +90,7 @@ int Wav::ReadHeader()
   bool seektodatapos=true;
   uint8_t buf[32];
   vector <uint8_t> vbuf;
-  uint32_t chunkid,chunksize,riffchunksize;
+  uint32_t chunkid,chunksize;
 
   file.read(reinterpret_cast<char*>(buf),12); // read 'RIFF' chunk descriptor
   chunkid=binUtils::get32LH(buf);
@@ -99,7 +99,6 @@ int Wav::ReadHeader()
   // do we have a wave file?
   if (chunkid==0x46464952 && binUtils::get32LH(buf+8)==0x45564157) {
 
-    riffchunksize=chunksize;
     myChunks.Append(chunkid,chunksize,buf+8,4);
 
     while (1) {
@@ -109,10 +108,10 @@ int Wav::ReadHeader()
       chunkid   = binUtils::get32LH(buf);
       chunksize = binUtils::get32LH(buf+4);
       if (chunkid==0x020746d66) { // read 'fmt ' chunk
-        if (chunksize!=16) {cout << "warning: invalid fmt-chunk size\n";return 1;}
+        if (chunksize!=16 && chunksize!=18) {cout << "warning: invalid fmt-chunk size\n";return 1;}
         else {
-            file.read(reinterpret_cast<char*>(buf),16);
-            myChunks.Append(chunkid,chunksize,buf,16);
+            file.read(reinterpret_cast<char*>(buf),chunksize);
+            myChunks.Append(chunkid,chunksize,buf,chunksize);
 
             int audioformat=binUtils::get16LH(buf);
             if (audioformat!=1) {cout << "warning: only PCM Format supported\n";return 1;};
@@ -121,6 +120,10 @@ int Wav::ReadHeader()
             byterate=binUtils::get32LH(buf+8);
             blockalign=binUtils::get16LH(buf+12);
             bitspersample=binUtils::get16LH(buf+14);
+            if (chunksize==18) {
+               int cbsize=binUtils::get16LH(buf+16);
+               cout << "  WAVE-Ext size: " << cbsize << " Bytes"<<endl;
+            }
             kbps=(samplerate*numchannels*bitspersample)/1000;
         }
       } else if (chunkid==0x61746164) { // 'data' chunk

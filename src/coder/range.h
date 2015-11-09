@@ -2,6 +2,7 @@
 #define RANGE_H
 
 #include "bufio.h"
+#include "../model/model.h"
 
 class RangeCoderBase {
   public:
