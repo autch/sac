@@ -1,8 +1,4 @@
 #include "codec.h"
-#include "pred/lpc.h"
-#include "pred/nlms.h"
-#include "pred/bias.h"
-#include "pred/rbf.h"
 
 FrameCoder::FrameCoder(int numch,int framesz,int profile)
 {
@@ -15,19 +11,22 @@ FrameCoder::FrameCoder(int numch,int framesz,int profile)
   } else if (profile==1) {
     baseprofile.Init(6,1);
     baseprofile.Set(0,0.99,0.9999,0.998);
-    baseprofile.Set(1,0,1000,500);
-    //baseprofile.Set(0,0.1,300,1);
-    baseprofile.Set(2,0.00005,0.001,0.0003);
-    baseprofile.Set(3,0.00005,0.001,0.0001);
-    baseprofile.Set(4,0.0001,0.01 ,0.003);
-    baseprofile.Set(5,0.001,0.1   ,0.01);
+    baseprofile.Set(1,0.000001,0.001,0.0004);
+    baseprofile.Set(2,0.000001,0.001,0.0001);
+    baseprofile.Set(3,0.00001,0.01,0.003);
+    baseprofile.Set(4,0.0001,0.1 ,0.01);
+    baseprofile.Set(5,0.99,0.9999,0.998);
   } else if (profile==2) {
-    baseprofile.Init(5,2);
-    baseprofile.Set(0,0.99,0.999,0.997);
-    baseprofile.Set(1,0.0001,0.005,0.00005);
-    baseprofile.Set(2,0.0001,0.005,0.0005);
-    baseprofile.Set(3,0.00001,0.001,0.0005);
-    baseprofile.Set(4,0.000001,0.0001,0.0001);
+    baseprofile.Init(8,2);
+    baseprofile.Set(0,0.98,0.9999,0.997);
+    baseprofile.Set(1,0.0000001,0.0001,0.00001);
+    baseprofile.Set(2,0.0000001,0.0001,0.000005);
+
+    baseprofile.Set(3,0.000001,0.001,0.0005);
+    baseprofile.Set(4,0.000001,0.001,0.0001);
+    baseprofile.Set(5,0.0001,0.01 ,0.003);
+    baseprofile.Set(6,0.001,0.1   ,0.01);
+    baseprofile.Set(7,0.99,0.9999,0.998);
   }
 
   framestats.resize(numchannels);
@@ -51,7 +50,7 @@ FrameCoder::FrameCoder(int numch,int framesz,int profile)
   numsamples=0;
 }
 
-void FrameCoder::PredictMonoFrame(int ch,int numsamples)
+/*void FrameCoder::PredictMonoFrame(int ch,int numsamples)
 {
   O1Pred myPred(31,5);
   LPC myLPC(0.998,16,32);
@@ -94,132 +93,9 @@ void FrameCoder::UnpredictMonoFrame(int ch,int numsamples)
     myLPC.Update(err1);
     myPred.Update(val);
   }
-}
-
-// Fast Profile
-// single stage OLS predictor with fixed order
-class StereoProfileFast : public StereoProcess {
-  public:
-    StereoProfileFast(double alpha,vector <FrameCoder::FrameStats> &stats)
-    :lpa(alpha,16,8,32),lpb(alpha,16,8,32),
-    stats(stats)
-    {
-      e[0]=e[1]=e[2]=e[3]=0;
-      n[0]=n[1]=n[2]=n[3]=0;
-    };
-    void Predict(int32_t val0,int32_t val1,int32_t &err0,int32_t &err1)
-    {
-       double p1a=lpa.Predict(e[1]);
-
-       e[0]=val0;
-       e[1]=val1;
-       double p2a=lpb.Predict(e[0]);
-       e[2]=val0-p1a;
-       e[3]=val1-p2a;
-
-       int32_t ip1=round(p1a);
-       int32_t ip2=round(p2a);
-
-       err0=val0-ip1;
-       err1=val1-ip2;
-    }
-    void Predict(int32_t val0,int32_t val1,int32_t &err0,int32_t &err1,int32_t &p0_a,int32_t &p0_b,int32_t &p1_a,int32_t &p1_b)
-    {
-
-    }
-    void Unpredict(int32_t err0,int32_t err1,int32_t &val0,int32_t &val1)
-    {
-       /*int32_t p1a=lpa.Predict(valb);
-       val0=err0+p1a;
-       int32_t p1b=lpb.Predict(val0);
-       val1=err1+p1b;
-
-       vala=val0;valb=val1;*/
-    }
-    void Update() {
-      lpa.Update(e[0]);
-      lpb.Update(e[1]);
-    }
-  private:
-    double e[4];
-    LPC2 lpa,lpb;
-    int n[4];
-    vector <FrameCoder::FrameStats> &stats;
-};
+}*/
 
 
-class StereoProfileNormal : public StereoProcess {
-  public:
-    StereoProfileNormal(const SacProfile &profile,vector <FrameCoder::FrameStats> &stats)
-    :lpc(2,LPC2(profile.Get(0),16,8,32,profile.Get(1))),
-     lms1(2,LMSADA2(profile.Get(2),profile.Get(3),256,128)),
-     lms2(2,LMSADA2(profile.Get(4),profile.Get(4),32,16)),
-     lms3(2,LMSADA2(profile.Get(5),profile.Get(5),8,4)),
-     //blend(2,BlendRPROP(3,0.005,0.0005,0.01)),
-     lmsmix(2,SSLMS(3,0.001)),
-     //lmsmix(2,BlendLM(profile.Get(0),3,1)),
-     pv(3),stats(stats)
-    {
-      for (int i=0;i<4;i++) val[0][i]=val[1][i]=0;
-    };
-    double Predict(int ch0,int ch1)
-    {
-       p[0]=lpc[ch0].Predict(val[ch1][0]);
-       p[1]=lms1[ch0].Predict(val[ch1][1]);
-       p[2]=lms2[ch0].Predict(val[ch1][2]);
-       p[3]=lms3[ch0].Predict(val[ch1][3]);
-
-       pv[0]=p[1];pv[1]=pv[0]+p[2];pv[2]=pv[1]+p[3];
-
-       p0=p[0];
-       p1=lmsmix[ch0].Predict(pv);
-       return p0+p1;
-    }
-    void CalcError(int ch,int32_t v)
-    {
-       val[ch][0]=v;
-       val[ch][1]=val[ch][0]-p[0];
-       val[ch][2]=val[ch][1]-p[1];
-       val[ch][3]=val[ch][2]-p[2];
-    }
-    void Predict(int32_t val0,int32_t val1,int32_t &err0,int32_t &err1)
-    {
-       err0=val0-round(Predict(0,1));
-       CalcError(0,val0);
-       err1=val1-round(Predict(1,0));
-       CalcError(1,val1);
-    }
-    void Unpredict(int32_t err0,int32_t err1,int32_t &val0,int32_t &val1)
-    {
-       int p0=round(Predict(0,1));
-       if (stats[0].enc_mapped) err0=stats[0].mymap.Unmap(p0,err0);
-       val0=err0+p0;
-       CalcError(0,val0);
-       //cout << "(" << err0 << " " << val0 << ")";
-
-       int p1=round(Predict(1,0));
-       if (stats[1].enc_mapped) err1=stats[1].mymap.Unmap(p1,err1);
-       val1=err1+p1;
-       CalcError(1,val1);
-    }
-    void Update() {
-      for (int ch=0;ch<2;ch++) {
-        lpc[ch].Update(val[ch][0]);
-        lms1[ch].Update(val[ch][1]);
-        lms2[ch].Update(val[ch][2]);
-        lms3[ch].Update(val[ch][3]);
-        lmsmix[ch].Update(val[ch][1]);
-      }
-    }
-  private:
-    double val[2][4],p[4];
-    vector <LPC2> lpc;
-    vector <LMSADA2> lms1,lms2,lms3;
-    vector <SSLMS> lmsmix;
-    Vector pv;
-    vector <FrameCoder::FrameStats> &stats;
-    double p0,p1;
-};
 
 
 void FrameCoder::AnalyseChannel(int ch,int numsamples)
@@ -262,25 +138,25 @@ void FrameCoder::AnalyseChannel(int ch,int numsamples)
     //cout << "total shift: " << tshift << endl;
 
     mean=mean/numsamples;
-    if (mean) {
+    /*if (mean) {
         minval-=mean;
         maxval-=mean;
         for (int i=0;i<numsamples;i++) src[i]-=mean;
-    }
+    }*/
     framestats[ch].minval=minval;
     framestats[ch].maxval=maxval;
     framestats[ch].mean=mean;
-    cout << "mean: " << mean << ", min: " << minval << " ,max: " << maxval << endl;
+    std::cout << "mean: " << mean << ", min: " << minval << " ,max: " << maxval << std::endl;
   }
 }
 
 
 void FrameCoder::PredictStereoFrame(const SacProfile &profile,int ch0,int ch1,int from,int numsamples)
 {
-  StereoProcess *myProfile=nullptr;
-  if (profile.type==0) myProfile=new StereoProfileFast(profile.coefs[0].vdef,framestats);
-  else if (profile.type==1) myProfile=new StereoProfileNormal(profile,framestats);
-  //else if (profile.type==2) myProfile=new StereoProfileHigh(profile,framestats);
+  StereoPredictor *myProfile=nullptr;
+  if (profile.type==0) myProfile=new StereoFast(profile.coefs[0].vdef,framestats);
+  else if (profile.type==1) myProfile=new StereoNormal(profile,framestats);
+  else if (profile.type==2) myProfile=new StereoHigh(profile,framestats);
   //TestProfile myProfile;
 
   if (myProfile) {
@@ -306,7 +182,7 @@ void FrameCoder::PredictStereoFrame(const SacProfile &profile,int ch0,int ch1,in
       int unmap_a=framestats[0].mymap.Unmap(pred0,map_a);
       int unmap_b=framestats[1].mymap.Unmap(pred1,map_b);
       if (unmap_a != dst0[i]) cout << unmap_a << " " << dst0[i] << endl;
-      if (unmap_b != dst1[i]) cout << unmap_a << " " << dst0[i] << endl;
+      if (unmap_b != dst1[i]) cout << unmap_b << " " << dst1[i] << endl;
     #endif
 
     int32_t e0=MathUtils::S2U(dst0[i]);
@@ -339,10 +215,10 @@ void FrameCoder::PredictStereoFrame(const SacProfile &profile,int ch0,int ch1,in
 
 void FrameCoder::UnpredictStereoFrame(const SacProfile &profile,int ch0,int ch1,int numsamples)
 {
-  StereoProcess *myProfile=nullptr;
-  if (profile.type==0) myProfile=new StereoProfileFast(profile.coefs[0].vdef,framestats);
-  else if (profile.type==1) myProfile=new StereoProfileNormal(profile,framestats);
-  //else if (profile.type==2) myProfile=new StereoProfileHigh(profile,framestats);
+  StereoPredictor *myProfile=nullptr;
+  if (profile.type==0) myProfile=new StereoFast(profile.coefs[0].vdef,framestats);
+  else if (profile.type==1) myProfile=new StereoNormal(profile,framestats);
+  else if (profile.type==2) myProfile=new StereoHigh(profile,framestats);
 
   if (myProfile) {
   const int32_t *src0=&(error[ch0][0]);
@@ -412,8 +288,10 @@ void FrameCoder::DecodeMonoFrame(int ch,int numsamples)
   RangeCoderSH rc(buf,1);
   rc.Init();
   if (framestats[ch].enc_mapped) {
+    framestats[ch].mymap.Reset();
     MapEncoder me(rc,framestats[ch].mymap.usedl,framestats[ch].mymap.usedh);
     me.Decode();
+    std::cout << buf.GetBufPos() << std::endl;
   }
 
   BitplaneCoder bc(rc,framestats[ch].maxbpn,numsamples);
@@ -436,14 +314,14 @@ class CostMeanRMS : public CostFunction {
 // estimate number of needed bits with a simple golomb model
 class CostGolomb : public CostFunction {
   public:
-      CostGolomb():mean_err(0.998){};
+      CostGolomb():mean_err(0.98){};
       double Calc(const int32_t *buf,int numsamples)
       {
         double nbits=0;
         if (numsamples) {
           for (int i=0;i<numsamples;i++) {
             int32_t val=MathUtils::S2U(buf[i]);
-            int m=max(static_cast<int>(mean_err.Get()),1);
+            int m=std::max(static_cast<int>(mean_err.Get()),1);
             int q=val/m;
             //int r=val-q*m;
             nbits+=(q+1);
@@ -507,7 +385,8 @@ void FrameCoder::Optimize(SacProfile &profile)
 
   double best_cost=GetCost(profile,&CostFunc,0,profile.coefs[0].vdef,start,samples_to_optimize);
 
-  for (int i=0;i<5;i++)
+  //for (int k=0;k<2;k++)
+  for (int i=0;i<8;i++)
   {
       double best_x=profile.coefs[i].vdef;
       double x=profile.coefs[i].vmin;
@@ -523,7 +402,7 @@ void FrameCoder::Optimize(SacProfile &profile)
           }
           x+=xinc;
       }
-      cout << best_x << endl;
+      std::cout << best_x << std::endl;
       profile.coefs[i].vdef=best_x;
   }
 }
@@ -549,7 +428,7 @@ void FrameCoder::InterChannel(int ch0,int ch1,int numsamples)
   score[3]=sum[2]+sum[3];
 
   if (score[3]*1.5 < score[0]) {
-    cout << "ms\n";
+    std::cout << "ms\n";
     for (int i=0;i<numsamples;i++) {
      int32_t v0=src0[i];
      int32_t v1=src1[i];
@@ -571,19 +450,20 @@ void FrameCoder::Predict()
     framestats[ch].mymap.Reset();
     framestats[ch].mymap.Analyse(&(samples[ch][0]),numsamples);
   }
+  //cout << framestats[0].mymap.Compare(framestats[1].mymap) << endl;
 
   //SacProfile optprofile=baseprofile;
   //Optimize(optprofile);
   if (numchannels==2) {
     //InterChannel(0,1,numsamples);
     PredictStereoFrame(baseprofile,0,1,0,numsamples);
-  } else for (int ch=0;ch<numchannels;ch++) PredictMonoFrame(ch,numsamples);
+  }// else for (int ch=0;ch<numchannels;ch++) PredictMonoFrame(ch,numsamples);
 }
 
 void FrameCoder::Unpredict()
 {
   if (numchannels==2) UnpredictStereoFrame(baseprofile,0,1,numsamples);
-  else for (int ch=0;ch<numchannels;ch++) UnpredictMonoFrame(ch,numsamples);
+  //else for (int ch=0;ch<numchannels;ch++) UnpredictMonoFrame(ch,numsamples);
 }
 
 void FrameCoder::Encode()
@@ -644,7 +524,7 @@ void FrameCoder::ReadEncoded(AudioFile &fin)
 void Codec::PrintProgress(int samplesprocessed,int totalsamples)
 {
   double r=samplesprocessed*100.0/(double)totalsamples;
-  cout << "  " << samplesprocessed << "/" << totalsamples << ":" << setw(6) << miscUtils::ConvertFixed(r,1) << "%\r";
+  std::cout << "  " << samplesprocessed << "/" << totalsamples << ":" << std::setw(6) << miscUtils::ConvertFixed(r,1) << "%\r";
 }
 
 void Codec::EncodeFile(Wav &myWav,Sac &mySac,int profile)
@@ -672,7 +552,7 @@ void Codec::EncodeFile(Wav &myWav,Sac &mySac,int profile)
     PrintProgress(samplescoded,myWav.getNumSamples());
     samplestocode-=samplesread;
   }
-  cout << endl;
+  std::cout << std::endl;
 }
 
 void Codec::DecodeFile(Sac &mySac,Wav &myWav)
@@ -699,5 +579,5 @@ void Codec::DecodeFile(Sac &mySac,Wav &myWav)
     samplestodecode-=myFrame.GetNumSamples();
   }
   myWav.WriteHeader();
-  cout << endl;
+  std::cout << std::endl;
 }

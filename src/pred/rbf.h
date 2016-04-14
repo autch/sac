@@ -25,31 +25,31 @@ class Map01 {
 class KMeans {
   public:
       KMeans(int k,int n)
-      :h(k,vector<double>(n)),hm(k,vector<double>(n)),nh(k),sigma(k),n(n),k(k)
+      :h(k,std::vector<double>(n)),hm(k,std::vector<double>(n)),nh(k),sigma(k),n(n),k(k)
       {
         srand(123456789L);
       }
       int rand_int(int imin,int imax) {
         return imin + ( std::rand() % ( imax - imin + 1 ) );
       }
-      void PrintVec(const vector <double>&vec)
+      void PrintVec(const std::vector <double>&vec)
       {
-         for(auto i : vec) cout << i << " ";
-         cout << endl;
+         for(auto i : vec) std::cout << i << " ";
+         std::cout << std::endl;
       }
-      void InitCenters(const vector <vector<double>>&data)
+      void InitCenters(const std::vector <std::vector<double>>&data)
       {
          for (int i=0;i<k;i++) {
             int r=rand_int(0,data.size()-1);
             h[i]=data[r];
          }
       }
-      void RunKMeans(const vector <vector <double>>&data)
+      void RunKMeans(const std::vector <std::vector <double>>&data)
       {
         for (int i=0;i<k;i++) {nh[i]=1;sigma[i]=0.;};
 
         for (size_t i=0;i<data.size();i++) {
-           const vector <double>&val=data[i];
+           const std::vector <double>&val=data[i];
 
            double mind=MathUtils::L2Dist(val,h[0]); // find cluster with minimum distance
            int minc=0;
@@ -60,7 +60,7 @@ class KMeans {
            nh[minc]++;
            double alpha=1.0/(double)nh[minc]; // update cluster
            //double alpha=0.001;
-           vector <double>&bmu=h[minc];
+           std::vector <double>&bmu=h[minc];
            for (int c=0;c<n;c++) bmu[c]=(1.0-alpha)*bmu[c]+alpha*val[c];
            sigma[minc]=(1.0-alpha)*sigma[minc]+alpha*mind;
         }
@@ -72,7 +72,7 @@ class KMeans {
         sum/=(double)k;
         return sum;
       }
-      int CalcCenters(const vector <vector<double>>&data)
+      int CalcCenters(const std::vector <std::vector<double>>&data)
       {
         InitCenters(data);
         hm=h;
@@ -88,11 +88,11 @@ class KMeans {
         //for (auto &v:h) PrintVec(v);
         //cout << endl;
       }
-    vector <vector<double>>h;
+    std::vector<std::vector<double>> h;
   private:
-    vector <vector<double>>hm;
-    vector <int>nh;
-    vector <double>sigma;
+    std::vector<std::vector<double>> hm;
+    std::vector <int>nh;
+    std::vector <double>sigma;
     int n,k;
 };
 
@@ -102,13 +102,13 @@ class BatchRBF {
     :myLM(0.999,num_centers+2),
      myKMeans(num_centers,num_memory),
      myMap(-(1<<15),1<<15),
-     data(batch_size,vector<double>(num_memory)),
+     data(batch_size,std::vector<double>(num_memory)),
      hist(num_memory),buf(batch_size),sigma(num_centers,1.0),
      ncenters(num_centers),nmemory(num_memory),bsize(batch_size)
     {
       k=0;centers_avail=false;
     }
-    void FillLM(const vector<double> &v)
+    void FillLM(const std::vector<double> &v)
     {
       for (int i=0;i<ncenters;i++)
         myLM.x[i]=Radial(MathUtils::L2Dist(v,myKMeans.h[i]),sigma[i]);
@@ -121,7 +121,7 @@ class BatchRBF {
       double p=myLM.Predict();
       return p;
     }
-    double Predict(const vector<double> &v) {
+    double Predict(const std::vector<double> &v) {
        FillLM(v);
        return myLM.Predict();
     }
@@ -169,7 +169,7 @@ class BatchRBF {
         ivar/=(double)bsize;
         evar/=(double)bsize;
         double gain=10.0*log(ivar/evar)/log(10.);
-        cout << "gain: " << gain << " dB\n";
+        std::cout << "gain: " << gain << " dB\n";
       }
     }
     void Update(double val)
@@ -193,8 +193,8 @@ class BatchRBF {
     LMM myLM;
     KMeans myKMeans;
     Map01 myMap;
-    vector <vector<double>>data;
-    vector <double>hist,buf,sigma;
+    std::vector <std::vector<double>>data;
+    std::vector <double>hist,buf,sigma;
     int ncenters,nmemory,bsize,k;
     bool centers_avail;
 };
@@ -204,7 +204,7 @@ class RBFFuzzy {
       RBFFuzzy(int num_centers,int num_memory)
       :myLM(0.998,num_centers*num_memory,1000),
        myMap(-(1<<15),1<<15),
-       h(num_memory,vector<double>(num_centers,0)),
+       h(num_memory,std::vector<double>(num_centers,0)),
        hist(num_memory),histm(10),sigma(num_memory,1),
        ncenters(num_centers),nmemory(num_memory)
       {
@@ -258,8 +258,8 @@ class RBFFuzzy {
   private:
     LM myLM;
     Map01 myMap;
-    vector <vector<double>> h;
-    vector <double>hist,histm,sigma;
+    std::vector <std::vector<double>> h;
+    std::vector <double>hist,histm,sigma;
     int ncenters,nmemory;
 };
 

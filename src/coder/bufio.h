@@ -18,10 +18,10 @@ class BufIO {
         else return buf[bufpos++];
       }
       size_t GetBufPos(){return bufpos;};
-      vector <uint8_t> &GetBuf(){return buf;};
+      std::vector <uint8_t> &GetBuf(){return buf;};
   private:
      size_t bufpos;
-     vector <uint8_t>buf;
+     std::vector <uint8_t>buf;
 };
 
 #endif

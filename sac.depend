@@ -1,5 +1,5 @@
 # depslib dependency file v1.0
-1446879578 source:c:\code\projects\sac\src\main.cpp
+1447263075 source:c:\code\projects\sac\src\main.cpp
 	"global.h"
 	"codec.h"
 	"utils.h"
@@ -10,7 +10,7 @@
 	"math/cov.h"
 	"pred/rbf.h"
 
-1443624024 c:\code\projects\sac\src\global.h
+1443627624 c:\code\projects\sac\src\global.h
 	<iostream>
 	<algorithm>
 	<fstream>
@@ -18,7 +18,7 @@
 	<iomanip>
 	<chrono>
 
-1445285938 c:\code\projects\sac\src\utils.h
+1445289538 c:\code\projects\sac\src\utils.h
 	"global.h"
 
 1441725580 source:c:\code\projects\sac\src\wav.cpp
@@ -49,25 +49,25 @@
 	"file/sac.h"
 	"pred/predictor.h"
 
-1441973548 c:\code\projects\sac\src\file\wav.h
+1441977148 c:\code\projects\sac\src\file\wav.h
 	"file.h"
 	"../utils.h"
 
-1441896742 c:\code\projects\sac\src\file\file.h
+1441900342 c:\code\projects\sac\src\file\file.h
 	"../global.h"
 
-1441969836 source:c:\code\projects\sac\src\file\file.cpp
+1441973436 source:c:\code\projects\sac\src\file\file.cpp
 	"file.h"
 
-1442498761 source:c:\code\projects\sac\src\file\sac.cpp
+1442502361 source:c:\code\projects\sac\src\file\sac.cpp
 	"sac.h"
 
-1442498750 c:\code\projects\sac\src\file\sac.h
+1442502350 c:\code\projects\sac\src\file\sac.h
 	"file.h"
 	"wav.h"
 	"../utils.h"
 
-1443339097 source:c:\code\projects\sac\src\file\wav.cpp
+1443342697 source:c:\code\projects\sac\src\file\wav.cpp
 	"wav.h"
 
 1447006526 c:\code\projects\sac\src\pred\predictor.h
@@ -91,28 +91,29 @@
 1441816559 c:\code\projects\sac\src\coder\bit.h
 	"../global.h"
 
-1447091033 source:c:\code\projects\sac\src\codec.cpp
+1447879435 source:c:\code\projects\sac\src\codec.cpp
 	"codec.h"
 	"pred/lpc.h"
 	"pred/nlms.h"
 	"pred/bias.h"
 	"pred/rbf.h"
+	"pred/rls.h"
 
-1447085948 c:\code\projects\sac\src\codec.h
+1447400473 c:\code\projects\sac\src\codec.h
 	"file/wav.h"
 	"file/sac.h"
 	"pred/predictor.h"
 	"coder/range.h"
 	"coder/vle.h"
 
-1443339360 c:\code\projects\sac\src\coder\range.h
+1443342960 c:\code\projects\sac\src\coder\range.h
 	"bufio.h"
 	"../model/model.h"
 
-1441878452 c:\code\projects\sac\src\coder\bufio.h
+1441882052 c:\code\projects\sac\src\coder\bufio.h
 	"../global.h"
 
-1442084491 source:c:\code\projects\sac\src\coder\range.cpp
+1442088091 source:c:\code\projects\sac\src\coder\range.cpp
 	"range.h"
 
 1441898746 c:\code\projects\sac\src\coder\rice.h
@@ -121,7 +122,7 @@
 
 1442839315 c:\code\projects\sac\src\coder\counter.h
 
-1447085836 c:\code\projects\sac\src\coder\vle.h
+1447879977 c:\code\projects\sac\src\coder\vle.h
 	"range.h"
 	"../model/counter.h"
 	"../model/map.h"
@@ -150,15 +151,16 @@
 1443342499 c:\code\projects\sac\src\coder\map.h
 	"counter.h"
 
-1447045397 c:\code\projects\sac\src\pred\lpc.h
+1447535556 c:\code\projects\sac\src\pred\lpc.h
 	"../math/cholesky.h"
 	"../math/cov.h"
 	"blend.h"
 
-1447088121 c:\code\projects\sac\src\pred\nlms.h
+1447699011 c:\code\projects\sac\src\pred\nlms.h
 	"../common/histbuf.h"
 	"blend.h"
 	"lpc.h"
+	"rls.h"
 
 1443169102 c:\code\projects\sac\src\common\histbuf.h
 	"../global.h"
@@ -177,9 +179,9 @@
 	"model.h"
 	"domain.h"
 
-1443770678 c:\code\projects\sac\src\model\model.h
+1443774278 c:\code\projects\sac\src\model\model.h
 
-1446827813 c:\code\projects\sac\src\pred\blend.h
+1447117233 c:\code\projects\sac\src\pred\blend.h
 	"lpc.h"
 
 1445149888 c:\code\projects\sac\src\pred\bias.h
@@ -190,4 +192,163 @@
 
 1445590526 c:\code\projects\sac\src\model\domain.h
 	"..\global.h"
+
+1447501081 c:\code\projects\sac\src\pred\rls.h
+	"..\global.h"
+
+1460572769 source:c:\coding\projects\sac\src\codec.cpp
+	"codec.h"
+
+1460572820 c:\coding\projects\sac\src\codec.h
+	"file/wav.h"
+	"file/sac.h"
+	"coder/vle.h"
+	"coder/map.h"
+	"profile.h"
+
+1460565172 c:\coding\projects\sac\src\file\wav.h
+	"file.h"
+	"../utils.h"
+
+1460565048 c:\coding\projects\sac\src\file\file.h
+	"../global.h"
+
+1460565652 c:\coding\projects\sac\src\global.h
+	<iostream>
+	<algorithm>
+	<fstream>
+	<sstream>
+	<iomanip>
+	<chrono>
+
+1460565661 c:\coding\projects\sac\src\utils.h
+	"global.h"
+
+1460565177 c:\coding\projects\sac\src\file\sac.h
+	"file.h"
+	"wav.h"
+	"../utils.h"
+
+1460571475 c:\coding\projects\sac\src\pred\predictor.h
+	"../global.h"
+
+1443342960 c:\coding\projects\sac\src\coder\range.h
+	"bufio.h"
+	"../model/model.h"
+
+1460565021 c:\coding\projects\sac\src\coder\bufio.h
+	"../global.h"
+
+1443774278 c:\coding\projects\sac\src\model\model.h
+
+1460568720 c:\coding\projects\sac\src\coder\vle.h
+	"range.h"
+	"../model/counter.h"
+	"../model/sse.h"
+	"../model/mixer.h"
+	"../utils.h"
+
+1445985023 c:\coding\projects\sac\src\model\counter.h
+	"model.h"
+
+1460566903 c:\coding\projects\sac\src\model\map.h
+	"counter.h"
+	"domain.h"
+
+1445594126 c:\coding\projects\sac\src\model\domain.h
+	"..\global.h"
+
+1460565191 c:\coding\projects\sac\src\model\mixer.h
+	"model.h"
+	"domain.h"
+
+1460571637 c:\coding\projects\sac\src\pred\lpc.h
+	"../math/cholesky.h"
+	"../math/cov.h"
+	"blend.h"
+
+1460565702 c:\coding\projects\sac\src\math\cholesky.h
+	"../global.h"
+	"../utils.h"
+	"matrix.h"
+
+1460567034 c:\coding\projects\sac\src\math\matrix.h
+	"../global.h"
+
+1460565705 c:\coding\projects\sac\src\math\cov.h
+	"matrix.h"
+
+1460565725 c:\coding\projects\sac\src\pred\blend.h
+	"lpc.h"
+
+1460572878 c:\coding\projects\sac\src\pred\nlms.h
+	"../common/histbuf.h"
+	"blend.h"
+	"lpc.h"
+
+1443172702 c:\coding\projects\sac\src\common\histbuf.h
+	"../global.h"
+
+1460573315 c:\coding\projects\sac\src\pred\rls.h
+	"../global.h"
+	"../math/matrix.h"
+
+1460565801 c:\coding\projects\sac\src\pred\bias.h
+	"../global.h"
+
+1460565850 c:\coding\projects\sac\src\pred\rbf.h
+	"lpc.h"
+
+1442088091 source:c:\coding\projects\sac\src\coder\range.cpp
+	"range.h"
+
+1460565942 source:c:\coding\projects\sac\src\file\file.cpp
+	"file.h"
+
+1460565950 source:c:\coding\projects\sac\src\file\sac.cpp
+	"sac.h"
+
+1460566009 source:c:\coding\projects\sac\src\file\wav.cpp
+	"wav.h"
+
+1460572448 source:c:\coding\projects\sac\src\main.cpp
+	"global.h"
+	"codec.h"
+	"common/timer.h"
+
+1443172785 c:\coding\projects\sac\src\common\timer.h
+	"../global.h"
+
+1460566113 source:c:\coding\projects\sac\src\math\cholesky.cpp
+	"cholesky.h"
+
+1460568296 c:\coding\projects\sac\src\coder\map.h
+	"range.h"
+	"../model/counter.h"
+	"../model/mixer.h"
+	"../model/sse.h"
+	<vector>
+
+1460567430 c:\coding\projects\sac\src\model\sse.h
+	"counter.h"
+	"domain.h"
+
+1460567789 source:c:\coding\projects\sac\src\coder\map.cpp
+	"map.h"
+
+1460568618 source:c:\coding\projects\sac\src\coder\vle.cpp
+	"vle.h"
+
+1460572897 c:\coding\projects\sac\src\profile.h
+	<vector>
+	"pred/lpc.h"
+	"pred/nlms.h"
+	"pred/rls.h"
+	"coder/map.h"
+
+1460572542 source:c:\coding\projects\sac\src\profile.cpp
+	"profile.h"
+
+1460573235 source:c:\coding\projects\sac\src\pred\rls.cpp
+	"rls.h"
 

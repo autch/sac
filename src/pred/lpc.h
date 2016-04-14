@@ -6,7 +6,7 @@
 #include "blend.h"
 
 
-class LPC : public MonoPredictor {
+class LPC {
   public:
       LPC(double alpha,int order,int k)
       :cov(alpha,order),chol(order),sol(order),order(order),k(k),nk(0)
@@ -26,14 +26,14 @@ class LPC : public MonoPredictor {
         if (nk>=k) {
           nk=0;
           if (chol.Factor(cov.c)) {
-            cout << "matrix indefinit" << endl;
+            std::cout << "matrix indefinit" << std::endl;
           } else chol.Solve(cov.b,sol);
         }
       }
   //private:
     AutoCov cov;
     Cholesky chol;
-    Vector sol;
+    std::vector<double> sol;
     int order,k,nk;
 };
 
@@ -62,14 +62,14 @@ class LM {
       k++;
       if (k>=kmax) {
         if (chol.Factor(cov)) {
-          cout << "matrix indefinit" << endl;
+          std::cout << "matrix indefinit" << std::endl;
         } else chol.Solve(b,w);
         k=0;
       }
     }
-    Vector x;
+    std::vector<double> x;
   private:
-    Vector w,b;
+    std::vector<double> w,b;
     Matrix cov;
     Cholesky chol;
     double lambda;
@@ -107,13 +107,13 @@ class LMM {
     }
     void Solve() {
         if (chol.Factor(cov)) {
-          cout << "matrix indefinit" << endl;
+          std::cout << "matrix indefinit" << std::endl;
           for (int i=0;i<n;i++) w[i]=0.;
         } else chol.Solve(b,w);
     }
-    Vector x,w;
+    std::vector<double> x,w;
   private:
-    Vector b;
+    std::vector<double> b;
     Matrix cov;
     Cholesky chol;
     double lambda;
@@ -139,7 +139,7 @@ class LM1 {
       }
   private:
     LM myLM;
-    vector <int32_t>hist;
+    std::vector <int32_t>hist;
     double mean;
     int n;
 };
@@ -164,7 +164,7 @@ class LMVolt2 {
   protected:
     int n;
     LM myLM;
-    Vector hist;
+    std::vector<double> hist;
 };
 
 //#define REORDER_HIST
@@ -214,7 +214,7 @@ int getIdxB(int i) {
         if (nk>=k) {
           nk=0;
           if (chol.Factor(cov.c)) {
-            cout << "matrix indefinit" << endl;
+            std::cout << "matrix indefinit" << std::endl;
           } else chol.Solve(cov.b);
         }
       }
@@ -222,7 +222,7 @@ int getIdxB(int i) {
   private:
     AutoCov cov;
     Cholesky chol;
-    Vector sol,ssum;
+    std::vector<double> sol,ssum;
     BlendErr blend;
     int S,D,k,nk;
 };
@@ -278,7 +278,7 @@ class LPC2 {
         if (nk>=k) {
           nk=0;
           if (chol.Factor(cov.c)) {
-            cout << "matrix indefinit" << endl;
+            std::cout << "matrix indefinit" << std::endl;
           } else chol.Solve(cov.b,sol);
         }
       }
@@ -286,7 +286,7 @@ class LPC2 {
   private:
     AutoCov cov;
     Cholesky chol;
-    Vector sol;
+    std::vector<double> sol;
     VF1 myVF;
     int S,D,k,nk;
     double pred;

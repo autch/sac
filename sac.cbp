@@ -23,7 +23,7 @@
 				<Option object_output="obj/Release/" />
 				<Option type="1" />
 				<Option compiler="gcc" />
-				<Option parameters="--encode C:\Code\test.wav c:\code\test.sac" />
+				<Option parameters="--encode --fast C:\Coding\death2.wav c:\coding\death2.sac" />
 				<Compiler>
 					<Add option="-O2" />
 					<Add option="-std=c++11" />
@@ -40,8 +40,11 @@
 		<Unit filename="src/codec.cpp" />
 		<Unit filename="src/codec.h" />
 		<Unit filename="src/coder/bufio.h" />
+		<Unit filename="src/coder/map.cpp" />
+		<Unit filename="src/coder/map.h" />
 		<Unit filename="src/coder/range.cpp" />
 		<Unit filename="src/coder/range.h" />
+		<Unit filename="src/coder/vle.cpp" />
 		<Unit filename="src/coder/vle.h" />
 		<Unit filename="src/common/histbuf.h" />
 		<Unit filename="src/common/rand.h" />
@@ -60,15 +63,18 @@
 		<Unit filename="src/math/matrix.h" />
 		<Unit filename="src/model/counter.h" />
 		<Unit filename="src/model/domain.h" />
-		<Unit filename="src/model/map.h" />
 		<Unit filename="src/model/mixer.h" />
 		<Unit filename="src/model/model.h" />
+		<Unit filename="src/model/sse.h" />
 		<Unit filename="src/pred/bias.h" />
 		<Unit filename="src/pred/blend.h" />
 		<Unit filename="src/pred/lpc.h" />
 		<Unit filename="src/pred/nlms.h" />
-		<Unit filename="src/pred/predictor.h" />
 		<Unit filename="src/pred/rbf.h" />
+		<Unit filename="src/pred/rls.cpp" />
+		<Unit filename="src/pred/rls.h" />
+		<Unit filename="src/profile.cpp" />
+		<Unit filename="src/profile.h" />
 		<Unit filename="src/utils.h" />
 		<Extensions>
 			<code_completion />

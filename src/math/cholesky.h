@@ -18,14 +18,14 @@ class Cholesky {
     };
     bool Test();
     int Factor(const Matrix &src);
-    void Solve(const Vector &b,Vector &x);
-    void Solve(const Vector &b);
+    void Solve(const std::vector<double> &b,std::vector<double> &x);
+    void Solve(const std::vector<double> &b);
     Matrix m;
-    vector <Vector>sol;
+    std::vector <std::vector<double>>sol;
     double regp;
   protected:
-    void CalcY(const Vector &b);
-    Vector y;
+    void CalcY(const std::vector<double> &b);
+    std::vector<double> y;
     double scale;
     int n;
 };

@@ -4,9 +4,9 @@ bool Cholesky::Test()
 {
   Matrix mtmp;
   mtmp.mat={{9,3,-6,12},{3,26,-7,-11},{-6,-7,9,7},{12,-11,7,65}};
-  Vector b={72,34,22,326};
-  Vector sol={2,4,3,5};
-  Vector x(4);
+  std::vector<double> b={72,34,22,326};
+  std::vector<double> sol={2,4,3,5};
+  std::vector<double> x(4);
   Factor(mtmp);
   Solve(b,x);
   if (MathUtils::SumDiff(sol,x)<EPS) return true;
@@ -34,7 +34,7 @@ int Cholesky::Factor(const Matrix &msrc)
   return 0;
 }
 
-void Cholesky::CalcY(const Vector &b)
+void Cholesky::CalcY(const std::vector<double> &b)
 {
   int i,j;
   double sum;
@@ -45,9 +45,9 @@ void Cholesky::CalcY(const Vector &b)
   }
 }
 
-void Cholesky::Solve(const Vector &b,Vector &x)
+void Cholesky::Solve(const std::vector<double> &b,std::vector<double> &x)
 {
-  //Vector bx=b;
+  //vector<double> bx=b;
   //for (int i=0;i<b.size();i++) bx[i]=bx[i]+regp/double(n);
   CalcY(b);
   int i,j;
@@ -60,7 +60,7 @@ void Cholesky::Solve(const Vector &b,Vector &x)
 }
 
 // solve for all orders
-void Cholesky::Solve(const Vector &b)
+void Cholesky::Solve(const std::vector<double> &b)
 {
   CalcY(b);
 

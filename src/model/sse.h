@@ -1,5 +1,5 @@
-#ifndef MAP_H
-#define MAP_H
+#ifndef SSE_H
+#define SSE_H
 
 #include "counter.h"
 #include "domain.h"
@@ -124,4 +124,4 @@ class SSENL
     int lb;
 };
 
-#endif // MAP_H
+#endif

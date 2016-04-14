@@ -17,7 +17,7 @@ class BlendLM {
       {
 
       }
-      double Predict(const Vector &p)
+      double Predict(const std::vector<double> &p)
       {
         for (int i=0;i<n;i++) myLM.x[i]=p[i];
         return myLM.Predict();
@@ -58,7 +58,7 @@ inline float rsqrt(float __x)
 
 // ADAGRAD method with adaptive subgradient
 // the inverse squareroot makes it horrible slow
-class LMSADA : public MonoPredictor {
+class LMSADA {
   public:
       LMSADA(double mu,int order)
       :w(order),eg(order),hist(order),order(order),pred(0),mu(mu)
@@ -74,7 +74,7 @@ class LMSADA : public MonoPredictor {
       void Update(int32_t val)
       {
         const double err=val-pred; // prediction error
-        const double rho=0.9;
+        const double rho=0.95;
         for (int i=0;i<order;i++) {
             double const grad=err*hist[i]; // gradient
             eg[i]=rho*eg[i]+(1.0-rho)*grad*grad; //accumulate gradients
@@ -87,7 +87,7 @@ class LMSADA : public MonoPredictor {
       }
       ~LMSADA(){};
   private:
-    Vector w,eg;
+    std::vector<double> w,eg;
     HistBuffer <double>hist;
     int32_t order,pred;
     double mu;
@@ -100,7 +100,7 @@ inline double sgn(double v){
       return 0;
     }
   public:
-      LMSADA2(double mu1,double mu2,int S,int D)
+      LMSADA2(int S,int D,double mu1,double mu2)
       :w(S+D),eg(S+D),hist(S+D),pred(0),mu1(mu1),mu2(mu2),S(S),D(D)
       {
       }
@@ -115,28 +115,31 @@ inline double sgn(double v){
       {
         const double err=val-pred; // prediction error
         const double rho=0.95;
+        double mu=mu1;
         for (int i=0;i<S;i++) {
             double const grad=err*hist[i]; // gradient
             eg[i]=rho*eg[i]+(1.0-rho)*(grad*grad);
-            w[i]+=(mu1*grad*rsqrt(eg[i]+0.001));// update weights
+            w[i]+=(mu*grad*rsqrt(eg[i]+0.001));// update weights
         }
+        mu=mu2;
         for (int i=S;i<S+D;i++) {
             double const grad=err*hist[i]; // gradient
             eg[i]=rho*eg[i]+(1.0-rho)*(grad*grad);
-            w[i]+=(mu2*grad*rsqrt(eg[i]+0.001));// update weights
+            w[i]+=(mu*grad*rsqrt(eg[i]+0.001));// update weights
         }
         for (int i=S-1;i>0;i--) hist[i]=hist[i-1];hist[0]=val; //update history for left channel
       }
       ~LMSADA2(){};
   private:
-    Vector w,eg;
-    Vector hist;
+    std::vector<double> w,eg;
+    std::vector<double> hist;
     double pred;
     double mu1,mu2;
     int S,D;
 };
 
-class NLMS : public MonoPredictor {
+
+class NLMS {
   public:
       NLMS(double mu,int order)
       :w(order),hist(order),order(order),pred(0),spow(0.0),mu(mu)
@@ -163,14 +166,14 @@ class NLMS : public MonoPredictor {
       }
       ~NLMS(){};
   private:
-    Vector w;
+    std::vector<double> w;
     HistBuffer <double>hist;
     int32_t order,pred;
     double spow,mu;
 };
 
 
-class NLMS2 : public StereoPredictor {
+class NLMS2 {
     inline double sgn(double v){
       if (v<0) return -1;
       if (v>0) return 1;
@@ -223,7 +226,7 @@ class NLMS2 : public StereoPredictor {
      spow-=(hist[pos]*hist[pos]); // update energy in the tapping window
      spow+=(val*val);
     }
-    Vector w,dw,hist;
+    std::vector<double> w,dw,hist;
     double spow,mu;
     int S,D,pred;
 };

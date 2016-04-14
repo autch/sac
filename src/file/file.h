@@ -10,21 +10,21 @@ class AudioFile {
     :samplerate(file.getSampleRate()),bitspersample(file.getBitsPerSample()),
     numchannels(file.getNumChannels()),numsamples(file.getNumSamples()),kbps(0){};
 
-    int OpenRead(const string &fname);
-    int OpenWrite(const string &fname);
-    streampos getFileSize() const {return filesize;};
+    int OpenRead(const std::string &fname);
+    int OpenWrite(const std::string &fname);
+    std::streampos getFileSize() const {return filesize;};
     int getNumChannels()const {return numchannels;};
     int getSampleRate()const {return samplerate;};
     int getBitsPerSample()const {return bitspersample;};
     int getKBPS()const {return kbps;};
     int getNumSamples()const {return numsamples;};
-    streampos readFileSize();
+    std::streampos readFileSize();
     void Close() {if (file.is_open()) file.close();};
-    void ReadData(vector <uint8_t>&data,size_t len);
-    void WriteData(const vector <uint8_t>&data,size_t len);
-    fstream file;
+    void ReadData(std::vector <uint8_t>&data,size_t len);
+    void WriteData(const std::vector <uint8_t>&data,size_t len);
+    std::fstream file;
   protected:
-    streampos filesize;
+    std::streampos filesize;
     int samplerate,bitspersample,numchannels,numsamples,kbps;
 };
 #endif // FILE_H

@@ -31,7 +31,7 @@ class RunWeight {
 
 class strUtils {
   public:
-      static void strUpper(string &str)
+      static void strUpper(std::string &str)
       {
         std::transform(str.begin(), str.end(),str.begin(), ::toupper);
       }
@@ -44,7 +44,7 @@ class MathUtils {
         while (val>>=1) nbits++;
         return nbits;
       }
-      static double SumDiff(const Vector &v1,const Vector &v2)
+      static double SumDiff(const std::vector<double> &v1,const std::vector<double> &v2)
       {
          if (v1.size()!=v2.size()) return -1;
          else {
@@ -65,7 +65,7 @@ class MathUtils {
         else val=-(val>>1);
         return val;
       }
-      static double L2Dist(const vector<double> &vec1,const vector<double> &vec2)
+      static double L2Dist(const std::vector<double> &vec1,const std::vector<double> &vec2)
       {
          if (vec1.size()!=vec2.size()) return -1;
          else {
@@ -74,7 +74,7 @@ class MathUtils {
            return sqrt(sum);
          }
       }
-      static double L2Dist2(const vector<double> &vec1,const vector<double> &vec2)
+      static double L2Dist2(const std::vector<double> &vec1,const std::vector<double> &vec2)
       {
          if (vec1.size()!=vec2.size()) return -1;
          else {
@@ -88,9 +88,9 @@ class MathUtils {
 class miscUtils {
   public:
   // retrieve time string
-  static string getTimeStrFromSamples(int numsamples,int samplerate)
+  static std::string getTimeStrFromSamples(int numsamples,int samplerate)
   {
-   ostringstream ss;
+   std::ostringstream ss;
    int h,m,s,ms;
    h=m=s=ms=0;
    if (numsamples>0 && samplerate>0) {
@@ -99,12 +99,12 @@ class miscUtils {
      while (numsamples >= samplerate) {++s;numsamples-=samplerate;};
      ms=round((numsamples*1000.)/samplerate);
    }
-   ss << setfill('0') << setw(2) << h << ":" << setw(2) << m << ":" << setw(2) << s << "." << ms;
+   ss << std::setfill('0') << std::setw(2) << h << ":" << std::setw(2) << m << ":" << std::setw(2) << s << "." << ms;
    return ss.str();
  }
- static string getTimeStrFromSeconds(int seconds)
+ static std::string getTimeStrFromSeconds(int seconds)
  {
-   ostringstream ss;
+   std::ostringstream ss;
    int h,m,s;
    h=m=s=0;
    if (seconds>0) {
@@ -112,13 +112,13 @@ class miscUtils {
       while (seconds >= 60) {++m;seconds-=60;};
       s=seconds;
    }
-   ss << setfill('0') << setw(2) << h << ":" << setw(2) << m << ":" << setw(2) << s;
+   ss << std::setfill('0') << std::setw(2) << h << ":" << std::setw(2) << m << ":" << std::setw(2) << s;
    return ss.str();
  }
- static string ConvertFixed(double val,int digits)
+ static std::string ConvertFixed(double val,int digits)
  {
-   ostringstream ss;
-   ss << fixed << setprecision(digits) << val;
+   std::ostringstream ss;
+   ss << std::fixed << std::setprecision(digits) << val;
    return ss.str();
  }
 };
@@ -153,9 +153,9 @@ class binUtils {
       {
         return val>((1<<(bps-1))-1)?val-(1<<bps):val;
       }
-      static string U322Str(uint32_t val)
+      static std::string U322Str(uint32_t val)
       {
-        string s;
+        std::string s;
         for (int i=0;i<4;i++) {s+=(char)(val & 0xff);val>>=8;};
         return s;
       }

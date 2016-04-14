@@ -59,8 +59,8 @@ class Mix2LeastCost : public Mix2Linear {
 class NMixLogistic
 {
   enum {WRANGE=1<<19};
-  vector <int16_t> x;
-  vector <int>w;
+  std::vector <int16_t> x;
+  std::vector <int>w;
 
   int16_t pd;
   uint8_t n;
@@ -73,7 +73,7 @@ class NMixLogistic
     void Init(int iw){
       for (int i=0;i<n;i++) w[i]=iw;
     };
-    int Predict(const vector <int>&p)
+    int Predict(const std::vector <int>&p)
     {
       int64_t sum=0;
       for (int i=0;i<n;i++)

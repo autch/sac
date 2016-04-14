@@ -46,7 +46,7 @@ class AutoCov {
       hist[n0]=val;
     }
     Matrix c;
-    Vector hist,b;
+    std::vector<double> hist,b;
     double alpha;
 };
 #endif // COV_H

@@ -10,7 +10,7 @@ class BlendErr {
       :serr(n+1,RunExp(alpha)),w(n),p(n),n(n)
       {
       }
-      double Predict(Vector pred)
+      double Predict(std::vector<double> pred)
       {
         p=pred;
         pm=0.;
@@ -45,8 +45,8 @@ class BlendErr {
         if (wsum>0) for (int i=0;i<n;i++) w[i]/=wsum;
       }
   protected:
-    vector <RunExp> serr;
-    Vector w,p;
+    std::vector <RunExp> serr;
+    std::vector<double> w,p;
     double pm;
     int n;
 
@@ -63,7 +63,7 @@ class BlendRPROP {
       :w(n,0.0),y(n,mu),p(n),lgrad(n),mu(mu),mu_min(mu_min),mu_max(mu_max),n(n)
       {
       }
-      double Predict(const Vector&pred)
+      double Predict(const std::vector<double>&pred)
       {
         p=pred;
         pm=0.;
@@ -79,15 +79,15 @@ class BlendRPROP {
             if (sg>0) {
               y[i]=std::min(y[i]*1.2,mu_max);
             } else if (sg<0) {
-              y[i]=std::max(y[i]*0.6,mu_min);
+              y[i]=std::max(y[i]*0.5,mu_min);
             }
             w[i]+=y[i]*sgn(grad);
             lgrad[i]=grad;
         }
       }
   private:
-    Vector w,y;
-    Vector p,lgrad;
+    std::vector<double> w,y;
+    std::vector<double> p,lgrad;
     double mu,mu_min,mu_max,pm;
     int32_t n;
 };
@@ -99,7 +99,7 @@ class BlendRMS {
       {
 
       }
-      int32_t Predict(const vector<int32_t>&pred)
+      int32_t Predict(const std::vector<int32_t>&pred)
       {
         p=pred;
         double sum=0.;
@@ -118,8 +118,8 @@ class BlendRMS {
         }
       }
   private:
-    Vector w,eg;
-    vector <int32_t>p;
+    std::vector<double> w,eg;
+    std::vector <int32_t>p;
     double mu;
     int32_t n,pm;
 };
@@ -137,7 +137,7 @@ class SSLMS {
       :w(n,0.0),n(n),mu(mu),p(n)
       {
       }
-      double Predict(const Vector &pred) {
+      double Predict(const std::vector<double> &pred) {
         p=pred;
         pm=0.;
         for (int i=0;i<n;i++) pm+=w[i]*p[i];
@@ -151,11 +151,11 @@ class SSLMS {
            w[i]+=wf*sgn(p[i]);
         }
       }
-    Vector w;
+    std::vector<double> w;
   private:
     int n;
     double mu,pm;
-    Vector p;
+    std::vector<double> p;
     //RunWeight rwa,rwb;
 };
 

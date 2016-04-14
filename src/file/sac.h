@@ -19,7 +19,7 @@ class Sac : public AudioFile
     int WriteHeader(Wav &myWav);
     int ReadHeader();
     int UnpackMetaData(Wav &myWav);
-    vector <uint8_t>metadata;
+    std::vector <uint8_t>metadata;
   private:
      uint32_t metadatasize,profile;
 };

@@ -1,22 +1,16 @@
 #include "global.h"
 #include "codec.h"
-#include "utils.h"
 #include "common/timer.h"
-#include "file/wav.h"
-#include "file/sac.h"
-#include "math/cholesky.h"
-#include "math/cov.h"
-#include "pred/rbf.h"
 
 void PrintInfo(const AudioFile &myWav)
 {
-  cout << "  WAVE  Codec: PCM (" << myWav.getKBPS() << " kbps)\n";
-  cout << "  " << myWav.getSampleRate() << "Hz " << myWav.getBitsPerSample() << " Bit  ";
-  if (myWav.getNumChannels()==1) cout << "Mono";
-  else if (myWav.getNumChannels()==2) cout << "Stereo";
-  else cout << myWav.getNumChannels() << " Channels";
-  cout << "\n";
-  cout << "  " << myWav.getNumSamples() << " Samples [" << miscUtils::getTimeStrFromSamples(myWav.getNumSamples(),myWav.getSampleRate()) << "]\n";
+  std::cout << "  WAVE  Codec: PCM (" << myWav.getKBPS() << " kbps)\n";
+  std::cout << "  " << myWav.getSampleRate() << "Hz " << myWav.getBitsPerSample() << " Bit  ";
+  if (myWav.getNumChannels()==1) std::cout << "Mono";
+  else if (myWav.getNumChannels()==2) std::cout << "Stereo";
+  else std::cout << myWav.getNumChannels() << " Channels";
+  std::cout << "\n";
+  std::cout << "  " << myWav.getNumSamples() << " Samples [" << miscUtils::getTimeStrFromSamples(myWav.getNumSamples(),myWav.getSampleRate()) << "]\n";
 }
 
 class DDS {
@@ -49,30 +43,30 @@ class Func2D {
 
 int main(int argc,char *argv[])
 {
-  cout << "Sac v0.0.3 - Lossless Audio Coder (c) Sebastian Lehmann\n";
-  cout << "compiled on " << __DATE__ << " ";
+  std::cout << "Sac v0.0.4 - Lossless Audio Coder (c) Sebastian Lehmann\n";
+  std::cout << "compiled on " << __DATE__ << " ";
   #ifdef __x86_64
-    cout << "(64-bit)";
+    std::cout << "(64-bit)";
   #else
-    cout << "(32-bit)";
+    std::cout << "(32-bit)";
   #endif
-  cout << "\n\n";
+  std::cout << "\n\n";
   if (argc < 2) {
-    cout << "usage: sac [--options] input output\n\n";
-    cout << "  --encode         encode input.wav to output.sac (default)\n";
-    //cout << "  --fast           fast, sacrifice compression\n";
-    //cout << "  --normal         normal compression (default)\n";
-    //cout << "  --high           high compression, slow\n";
-    cout << "  --decode         decode input.sac to output.wav\n";
+    std::cout << "usage: sac [--options] input output\n\n";
+    std::cout << "  --encode         encode input.wav to output.sac (default)\n";
+    std::cout << "  --fast           fast, sacrifice compression\n";
+    std::cout << "  --normal         normal compression (default)\n";
+    std::cout << "  --high           high compression, slow\n";
+    std::cout << "  --decode         decode input.sac to output.wav\n";
     return 1;
   }
 
-  string sinputfile,soutputfile;
+  std::string sinputfile,soutputfile;
   int mode=0;
   int profile=1;
 
   bool first=true;
-  string param,uparam;
+  std::string param,uparam;
   for (int i=1;i<argc;i++) {
     param=uparam=argv[i];
     strUtils::strUpper(uparam);
@@ -82,7 +76,7 @@ int main(int argc,char *argv[])
        else if (uparam.compare("--FAST")==0) profile=0;
        else if (uparam.compare("--NORMAL")==0) profile=1;
        else if (uparam.compare("--HIGH")==0) profile=2;
-       else cout << "warning: unknown option '" << param << "'\n";
+       else std::cout << "warning: unknown option '" << param << "'\n";
     } else {
        if (first) {sinputfile=param;first=false;}
        else soutputfile=param;
@@ -93,24 +87,24 @@ int main(int argc,char *argv[])
 
   if (mode==0) {
     Wav myWav(true);
-    cout << "Open: '" << sinputfile << "': ";
+    std::cout << "Open: '" << sinputfile << "': ";
     if (myWav.OpenRead(sinputfile)==0) {
-      cout << "ok (" << myWav.getFileSize() << " Bytes)\n";
+      std::cout << "ok (" << myWav.getFileSize() << " Bytes)\n";
       if (myWav.ReadHeader()==0) {
          if (myWav.getBitsPerSample()!=16 || myWav.getNumChannels()!=2) {
-            cout << "Unsupported input format." << endl;
+            std::cout << "Unsupported input format." << std::endl;
             myWav.Close();
             return 1;
          }
          Sac mySac(myWav);
-         cout << "Create: '" << soutputfile << "': ";
+         std::cout << "Create: '" << soutputfile << "': ";
          if (mySac.OpenWrite(soutputfile)==0) {
-           cout << "ok\n";
+           std::cout << "ok\n";
            PrintInfo(myWav);
-           cout << "  Profile: ";
-           if (profile==0) cout << "fast" << endl;
-           else if (profile==1) cout << "normal" << endl;
-           else if (profile==2) cout << "high" << endl;
+           std::cout << "  Profile: ";
+           if (profile==0) std::cout << "fast" << std::endl;
+           else if (profile==1) std::cout << "normal" << std::endl;
+           else if (profile==2) std::cout << "high" << std::endl;
            Codec myCodec;
            myCodec.EncodeFile(myWav,mySac,profile);
            uint64_t infilesize=myWav.getFileSize();
@@ -120,40 +114,40 @@ int main(int argc,char *argv[])
              r=outfilesize*100./infilesize;
              bps=(outfilesize*8.)/static_cast<double>(myWav.getNumSamples()*myWav.getNumChannels());
            }
-           cout << endl << "  " << infilesize << "->" << outfilesize<< "=" <<miscUtils::ConvertFixed(r,2) << "% (" << miscUtils::ConvertFixed(bps,2)<<" bps)"<<endl;
+           std::cout << std::endl << "  " << infilesize << "->" << outfilesize<< "=" <<miscUtils::ConvertFixed(r,2) << "% (" << miscUtils::ConvertFixed(bps,2)<<" bps)"<<std::endl;
 
            mySac.Close();
-         } else cout << "could not create\n";
-      } else cout << "warning: input is not a valid .wav file\n";
+         } else std::cout << "could not create\n";
+      } else std::cout << "warning: input is not a valid .wav file\n";
       myWav.Close();
-    } else cout << "could not open\n";
+    } else std::cout << "could not open\n";
   } else if (mode==1) {
-    cout << "Open: '" << sinputfile << "': ";
+    std::cout << "Open: '" << sinputfile << "': ";
     Sac mySac;
     if (mySac.OpenRead(sinputfile)==0) {
-      cout << "ok (" << mySac.getFileSize() << " Bytes)\n";
+      std::cout << "ok (" << mySac.getFileSize() << " Bytes)\n";
       if (mySac.ReadHeader()==0) {
            PrintInfo(mySac);
            Wav myWav(mySac,true);
-           cout << "Create: '" << soutputfile << "': ";
+           std::cout << "Create: '" << soutputfile << "': ";
            if (myWav.OpenWrite(soutputfile)==0) {
-             cout << "ok\n";
-             cout << "  Profile: ";
-             if (mySac.GetProfile()==0) cout << "fast" << endl;
-             else if (mySac.GetProfile()==1) cout << "normal" << endl;
-             else if (mySac.GetProfile()==1) cout << "high" << endl;
+             std::cout << "ok\n";
+             std::cout << "  Profile: ";
+             if (mySac.GetProfile()==0) std::cout << "fast" << std::endl;
+             else if (mySac.GetProfile()==1) std::cout << "normal" << std::endl;
+             else if (mySac.GetProfile()==1) std::cout << "high" << std::endl;
 
              Codec myCodec;
              myCodec.DecodeFile(mySac,myWav);
              myWav.Close();
-           } else cout << "could not create\n";
-      } else cout << "warning: input is not a valid .sac file\n";
+           } else std::cout << "could not create\n";
+      } else std::cout << "warning: input is not a valid .sac file\n";
       mySac.Close();
     }
   }
 
   myTimer.stop();
-  cout << "  Time:   [" << miscUtils::getTimeStrFromSeconds(round(myTimer.elapsedS())) << "]" << endl;
+  std::cout << "  Time:   [" << miscUtils::getTimeStrFromSeconds(round(myTimer.elapsedS())) << "]" << std::endl;
 
   return 0;
 }

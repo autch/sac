@@ -21,7 +21,7 @@ class BC {
       } else bias=0;
       pm=p+bias;
 
-      Vector pred={p,pm};
+      std::vector<double> pred={p,pm};
       double px=cmix.Predict(pred);
       //cout << pm << " " << px << endl;
       return px;
@@ -45,7 +45,7 @@ class BC {
     double pm,bias;
     double esum[4];
     int en[4];
-    Vector hist;
+    std::vector<double> hist;
     int ctx;
     SSLMS cmix;
 };
@@ -96,8 +96,8 @@ class BiasCorrection {
       lerr=error;
     }
   protected:
-    Vector hist;
-    vector <ectx>err;
+    std::vector<double> hist;
+    std::vector <ectx>err;
     int ctx,p,bias,lerr;
 
 };
