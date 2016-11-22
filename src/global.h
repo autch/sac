@@ -7,6 +7,8 @@
 #include <sstream>
 #include <iomanip>
 #include <chrono>
+#include <vector>
+#include <cmath>
 
 #define EPS (1E-14)
 
